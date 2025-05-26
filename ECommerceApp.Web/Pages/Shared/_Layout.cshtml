@@ -66,71 +66,6 @@
     </div>
 
 
-    <!-- Add Product Modal -->
-    <div id="add-product-modal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white p-8 rounded-xl w-full max-w-lg">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-[24px] font-bold text-[#252C32]">Add New Product</h2>
-                <button id="modal-close" class="text-[#777777] hover:text-[#252C32]">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
-                    </svg>
-                </button>
-            </div>
-            <p class="text-[14px] text-[#777777] mb-6">Add description of your new product.</p>
-            <form method="post" enctype="multipart/form-data">
-                <div class="mb-4">
-                    <label class="block text-[14px] font-medium text-[#252C32] mb-1">Product Name</label>
-                    <input type="text"
-                        class="w-full border border-[#E5E9EB] p-3 rounded-lg text-[16px] text-[#252C32] focus:outline-none focus:ring-2 focus:ring-[#2F80ED]"
-                        required />
-                </div>
-                <div class="mb-4 flex items-center">
-                    <div class="flex-1">
-                        <label class="block text-[14px] font-medium text-[#252C32] mb-1">Slug</label>
-                        <input type="text"
-                            class="w-full border border-[#E5E9EB] p-3 rounded-lg text-[16px] text-[#252C32] focus:outline-none focus:ring-2 focus:ring-[#2F80ED]"
-                            required />
-                    </div>
-                    <button type="button"
-                        class="ml-3 bg-[#F7F7F7] text-[#252C32] font-semibold text-[14px] px-4 py-3 rounded-lg hover:bg-[#E5E9EB] transition"
-                        onclick="generateSlug()">Generate</button>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-[14px] font-medium text-[#252C32] mb-1">Price</label>
-                    <input type="number" step="0.01"
-                        class="w-full border border-[#E5E9EB] p-3 rounded-lg text-[16px] text-[#252C32] focus:outline-none focus:ring-2 focus:ring-[#2F80ED]"
-                        required />
-                </div>
-                <div class="mb-4">
-                    <label class="block text-[14px] font-medium text-[#252C32] mb-1">Discount Start</label>
-                    <input type="date"
-                        class="w-full border border-[#E5E9EB] p-3 rounded-lg text-[16px] text-[#252C32] focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
-                </div>
-                <div class="mb-4">
-                    <label class="block text-[14px] font-medium text-[#252C32] mb-1">Discount End</label>
-                    <input type="date"
-                        class="w-full border border-[#E5E9EB] p-3 rounded-lg text-[16px] text-[#252C32] focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
-                </div>
-                <div class="mb-4">
-                    <label class="block text-[14px] font-medium text-[#252C32] mb-1">Discount Percentage</label>
-                    <input type="number" step="0.01"
-                        class="w-full border border-[#E5E9EB] p-3 rounded-lg text-[16px] text-[#252C32] focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
-                </div>
-                <div class="mb-4">
-                    <label class="block text-[14px] font-medium text-[#252C32] mb-1">Product Image</label>
-                    <input type="file" class="w-full border border-[#E5E9EB] p-3 rounded-lg text-[16px] text-[#252C32]"
-                        accept="image/*" />
-                </div>
-                <button type="submit"
-                    class="bg-[#2F80ED] text-white font-semibold text-[16px] px-4 py-3 rounded-lg w-full hover:bg-[#2568C1] transition">Add</button>
-            </form>
-        </div>
-    </div>
-
     <footer class="border-t border-[#E5E9EB] bg-white mt-8">
         <div class="container mx-auto px-4 py-4 text-[14px] text-[#777777]">
             © 2025 - E-Bazaar
@@ -139,39 +74,37 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // Modal and Sidebar Toggle
         const cartToggle = document.getElementById('cart-toggle');
         const cartSidebar = document.getElementById('cart-sidebar');
         const cartClose = document.getElementById('cart-close');
         const addProductModal = document.getElementById('add-product-modal');
         const modalClose = document.getElementById('modal-close');
+        const addProductToggle = document.getElementById('add-product-toggle');
 
-        cartToggle.addEventListener('click', () => {
+        cartToggle?.addEventListener('click', () => {
             cartSidebar.classList.toggle('translate-x-full');
             cartSidebar.classList.toggle('translate-x-0');
         });
 
-        cartClose.addEventListener('click', () => {
+        cartClose?.addEventListener('click', () => {
             cartSidebar.classList.add('translate-x-full');
             cartSidebar.classList.remove('translate-x-0');
         });
 
-        modalClose.addEventListener('click', () => {
+        modalClose?.addEventListener('click', () => {
+            console.log("Closing modal");
             addProductModal.classList.add('hidden');
         });
 
-        // Note: Add product toggle button is not present in the layout; assuming it's added dynamically
-        document.addEventListener('click', (e) => {
-            if (e.target.id === 'add-product-toggle') {
-                addProductModal.classList.remove('hidden');
-            }
+        addProductToggle?.addEventListener('click', () => {
+            console.log("Opening modal");
+            addProductModal.classList.remove('hidden');
         });
 
-        // Generate Slug
         function generateSlug() {
             const nameInput = document.querySelector('input[type="text"]');
             const slugInput = document.querySelector('input[type="text"]:nth-of-type(2)');
-            if (nameInput.value) {
+            if (nameInput?.value) {
                 slugInput.value = nameInput.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
             }
         }
