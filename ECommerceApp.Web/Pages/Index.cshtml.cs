@@ -1,28 +1,19 @@
-using ECommerceApp.Web.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ECommerceApp.Web.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly HttpClient _http;
+    private readonly ILogger<IndexModel> _logger;
 
-    public IndexModel(IHttpClientFactory httpClientFactory)
+    public IndexModel(ILogger<IndexModel> logger)
     {
-        _http = httpClientFactory.CreateClient("API");
+        _logger = logger;
     }
 
-    public List<Product> Products { get; set; } = new();
-
-    public async Task OnGetAsync()
+    public void OnGet()
     {
-        var result = await _http.GetFromJsonAsync<ProductResponse>("api/products?page=1&pageSize=8");
-        Products = result?.Products ?? new List<Product>();
-    }
 
-    public class ProductResponse
-    {
-        public int Total { get; set; }
-        public List<Product> Products { get; set; } = new();
     }
 }

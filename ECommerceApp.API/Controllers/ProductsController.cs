@@ -1,19 +1,44 @@
 using Microsoft.AspNetCore.Mvc;
 using ECommerceApp.API.Data;
 using ECommerceApp.API.Models;
+using ECommerceApp.API.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceApp.API.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
 public class ProductsController : ControllerBase
 {
     private readonly AppDbContext _context;
+
     public ProductsController(AppDbContext context) => _context = context;
 
     [HttpPost]
-    public async Task<IActionResult> AddProduct(Product product)
+    public async Task<IActionResult> AddProduct([FromForm] ProductDto productDto)
     {
+        string? imageUrl = null;
+        if (productDto.ImageFile != null)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", productDto.ImageFile.FileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await productDto.ImageFile.CopyToAsync(stream);
+            }
+            imageUrl = $"/images/{productDto.ImageFile.FileName}";
+        }
+
+        var product = new Product
+        {
+            Name = productDto.Name,
+            Slug = productDto.Slug,
+            Price = productDto.Price,
+            DiscountPercent = productDto.DiscountPercent,
+            DiscountStartDate = productDto.DiscountStartDate,
+            DiscountEndDate = productDto.DiscountEndDate,
+            ImageUrl = imageUrl
+        };
+
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
         return Ok(product);
@@ -32,6 +57,20 @@ public class ProductsController : ControllerBase
             .Take(pageSize)
             .ToListAsync();
 
-        return Ok(new { total, products });
+        var today = DateTime.Today;
+        var productDtos = products.Select(p => new
+        {
+            p.Id,
+            p.Name,
+            p.Slug,
+            p.Price,
+            DiscountedPrice = (p.DiscountPercent.HasValue && p.DiscountStartDate <= today && today <= p.DiscountEndDate)
+                ? p.Price * (1 - p.DiscountPercent.Value / 100)
+                : (decimal?)null,
+            p.ImageUrl
+        }).ToList();
+
+        return Ok(new { total, products = productDtos });
     }
 }
+
