@@ -11,8 +11,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAuthorization();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost5026", policy =>
+    {
+        policy.WithOrigins("http://localhost:5026")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 var app = builder.Build();
+app.UseCors("AllowLocalhost5026");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
