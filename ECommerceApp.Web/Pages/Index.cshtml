@@ -3,7 +3,22 @@
 @{
     ViewData["Title"] = "Home page";
 }
-
+<style>
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+        width: 100%;
+        height: 100%;
+    }
+    input[type="date"] {
+        position: relative;
+    }
+    input[type="date"]::-moz-focus-inner {
+        border: 0;
+    }
+</style>
 
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
     <!-- Total Product Card -->
@@ -71,7 +86,7 @@
 
 
 <!-- Add Product Modal -->
-<div id="add-product-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+<div id="add-product-modal" class="fixed bg-[rgba(0,0,0,0.4)] inset-0 flex items-center justify-center hidden z-50">
     <div class="bg-white p-8 rounded-xl w-full max-w-4xl relative">
         <!-- Close Button -->
         <button id="modal-close" class="absolute top-4 right-4 text-[#777777] hover:text-[#252C32] z-50">
@@ -85,56 +100,66 @@
         <p class="text-sm text-[#5F6D7E] mb-6">Add description of your new product.</p>
 
         <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Row 1: Product Name (Full Width) -->
+            <!-- Row 1: Product Name -->
             <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-[#252C32] mb-1">Product Name</label>
+                <label class="block text-sm font-bold text-[#252C32] mb-1">Product Name</label>
                 <input type="text" required
                     class="w-full border border-[#E5E9EB] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
             </div>
 
             <!-- Row 2: Slug + Price -->
             <div>
-                <label class="block text-sm font-medium text-[#252C32] mb-1">Slug</label>
+                <label class="block text-sm font-bold text-[#252C32] mb-1">Slug</label>
                 <div class="flex">
                     <input type="text" required
                         class="flex-1 border border-[#E5E9EB] p-3 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
                     <button type="button" onclick="generateSlug()"
-                        class="bg-[#F7F7F7] border border-[#E5E9EB] px-4 py-3 rounded-r-lg hover:bg-[#E5E9EB] text-sm font-medium text-[#252C32]">
+                        class="bg-[#2F80ED] text-white border border-[#2F80ED] px-4 py-3 rounded-r-lg hover:bg-[#2568C1] text-sm font-semibold transition">
                         Generate
                     </button>
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-medium text-[#252C32] mb-1">Price</label>
+                <label class="block text-sm font-bold text-[#252C32] mb-1">Price</label>
                 <input type="number" step="0.01" required
                     class="w-full border border-[#E5E9EB] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
             </div>
 
-            <!-- Row 3: Discount Start + Discount End -->
-            <div>
-                <label class="block text-sm font-medium text-[#252C32] mb-1">Discount Start</label>
-                <input type="date"
-                    class="w-full border border-[#E5E9EB] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
+            <!-- Row 3: Discount Start + End with icon the problem is two icon is showing  -->
+            <div class="relative">
+                <label class="block text-sm font-bold text-[#252C32] mb-1">Discount Start</label>
+                <input type="date" id="discount-start"
+                    class="w-full border border-[#E5E9EB] p-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
+                <svg class="absolute right-3 top-10 w-5 h-5 text-[#2F80ED] pointer-events-none" fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-[#252C32] mb-1">Discount End</label>
-                <input type="date"
-                    class="w-full border border-[#E5E9EB] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
+            <div class="relative">
+                <label class="block text-sm font-bold text-[#252C32] mb-1">Discount End</label>
+                <input type="date" id="discount-end"
+                    class="w-full border border-[#E5E9EB] p-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
+                <svg class="absolute right-3 top-10 w-5 h-5 text-[#2F80ED] pointer-events-none" fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
             </div>
 
             <!-- Row 4: Discount % + Image -->
             <div>
-                <label class="block text-sm font-medium text-[#252C32] mb-1">Discount Percentage</label>
+                <label class="block text-sm font-bold text-[#252C32] mb-1">Discount Percentage</label>
                 <input type="number" step="0.01"
                     class="w-full border border-[#E5E9EB] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
             </div>
             <div>
-                <label class="block text-sm font-medium text-[#252C32] mb-1">Product Image</label>
+                <label class="block text-sm font-bold text-[#252C32] mb-1">Product Image</label>
                 <input type="file" accept="image/*"
                     class="w-full border border-[#E5E9EB] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
             </div>
 
-            <!-- Submit Button (Full Width) -->
+            <!-- Submit Button -->
             <div class="col-span-1 md:col-span-2">
                 <button type="submit"
                     class="bg-[#2F80ED] text-white font-semibold text-[16px] px-4 py-3 rounded-lg w-full hover:bg-[#2568C1] transition">
