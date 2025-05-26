@@ -4,7 +4,44 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <!-- Total Product Card -->
+    <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl shadow-sm p-6 text-white">
+        <div class="flex items-center mb-3">
+            <svg class="w-8 h-8 text-white mr-2" fill="none" stroke="currentColor" stroke-width="2"
+                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 3h18v4H3V3zm0 6h18v12H3V9z" />
+            </svg>
+        </div>
+        <h3 class="text-[18px] font-semibold">Total Product: 50</h3>
+        <p class="text-[14px]">Warehouse has a total of 50 products today & the max capacity is 200.</p>
+    </div>
+
+    <!-- Total Vendor Card -->
+    <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl shadow-sm p-6 text-white">
+        <div class="flex items-center mb-3">
+            <svg class="w-8 h-8 text-white mr-2" fill="none" stroke="currentColor" stroke-width="2"
+                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" />
+            </svg>
+        </div>
+        <h3 class="text-[18px] font-semibold">Total Vendor: 10</h3>
+        <p class="text-[14px]">A total of 10 out of 10 vendors are available for supply now.</p>
+    </div>
+
+    <!-- Unique Product Card -->
+    <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl shadow-sm p-6 text-white">
+        <div class="flex items-center mb-3">
+            <svg class="w-8 h-8 text-white mr-2" fill="none" stroke="currentColor" stroke-width="2"
+                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0H4" />
+            </svg>
+        </div>
+        <h3 class="text-[18px] font-semibold">Unique Product: 6</h3>
+        <p class="text-[14px]">Total number of products that are not duplicate.</p>
+    </div>
 </div>
