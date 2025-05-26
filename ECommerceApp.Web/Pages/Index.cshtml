@@ -99,11 +99,11 @@
         <h2 class="text-lg font-bold text-[#252C32] mb-1">Add New Product</h2>
         <p class="text-xs text-[#5F6D7E] mb-4">Add description of your new product.</p>
 
-        <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <form id="add-product-form" method="post" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <!-- Product Name -->
             <div class="md:col-span-2">
                 <label class="block font-semibold mb-1">Product Name</label>
-                <input type="text" placeholder="Product Name" required
+                <input type="text" name="Name" placeholder="Product Name" required
                     class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
             </div>
 
@@ -111,7 +111,7 @@
             <div>
                 <label class="block font-semibold mb-1">Slug</label>
                 <div class="flex">
-                    <input type="text" placeholder="product-name" required
+                    <input type="text" name="Slug" placeholder="product-name" required
                         class="flex-1 border border-[#E5E9EB] p-2 rounded-l-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
                     <button type="button" onclick="generateSlug()"
                         class="bg-[#2F80ED] text-white border border-[#2F80ED] px-3 py-2 rounded-r-md hover:bg-[#2568C1] font-medium transition text-xs">
@@ -330,3 +330,156 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const API_BASE_URL = 'http://localhost:5099'; // Your API base URL
+        const form = document.getElementById('add-product-form');
+        const modal = document.getElementById('add-product-modal');
+        const closeModalBtn = document.getElementById('modal-close');
+        const addProductToggle = document.getElementById('add-product-toggle');
+        const searchInput = document.querySelector('input[placeholder="Search product by name..."]');
+        const productGrid = document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4');
+        const resultsCount = document.querySelector('.text-black.font-bold.text-lg');
+        const paginationContainer = document.querySelector('.flex.items-center.gap-2.text-sm');
+        const perPageSelect = document.getElementById('per-page');
+
+        let currentPage = 1;
+        let pageSize = parseInt(perPageSelect.value) || 8;
+
+        // Generate Slug
+        function generateSlug() {
+            const nameInput = document.querySelector('[name="Name"]');
+            const slugInput = document.querySelector('[name="Slug"]');
+            if (nameInput && slugInput) {
+                slugInput.value = nameInput.value
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9\-]/g, '');
+            }
+        }
+
+        // Load Products (for both all products and search results)
+        async function loadProducts(page = 1, search = '') {
+            try {
+                const url = `${API_BASE_URL}/api/products?page=${page}&pageSize=${pageSize}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch products: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                renderProducts(data.Products, data.Total, page);
+            } catch (err) {
+                console.error('Error loading products:', err);
+                resultsCount.textContent = 'Error loading products';
+                productGrid.innerHTML = '';
+            }
+        }
+
+        // Render Products and Update UI
+        function renderProducts(products, total, page) {
+            // Update product grid
+            productGrid.innerHTML = products.map(product => {
+                const discountedPrice = product.DiscountedPrice ? `$${product.DiscountedPrice.toFixed(2)}` : '';
+                const originalPrice = product.Price ? `$${product.Price.toFixed(2)}` : '';
+                return `
+                    <div class="rounded-lg overflow-hidden shadow-sm flex flex-col">
+                        <img src="${product.ImageUrl || 'https://via.placeholder.com/300x200'}" alt="${product.Name}" class="w-full h-48 object-cover" />
+                        <div class="p-4 flex flex-col gap-2">
+                            <h3 class="font-semibold text-sm text-[#252C32]">${product.Name}</h3>
+                            <div class="flex items-center space-x-2 text-sm">
+                                <span class="text-[#2F80ED] font-semibold">${discountedPrice || originalPrice}</span>
+                                ${discountedPrice ? `<del class="text-gray-500">${originalPrice}</del>` : ''}
+                            </div>
+                            <button onclick="addToCart(${product.Id})" class="mt-2 w-fit px-3 py-1 text-sm text-black bg-white border border-gray-300 rounded hover:bg-[#2F80ED] hover:text-white transition">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Update results count
+            const start = (page - 1) * pageSize + 1;
+            const end = Math.min(page * pageSize, total);
+            resultsCount.textContent = `Showing ${start}–${end} of ${total} results`;
+
+            // Update pagination
+            const totalPages = Math.ceil(total / pageSize);
+            paginationContainer.innerHTML = `
+                <button onclick="loadProducts(${page - 1}, '${searchInput.value}')" ${page === 1 ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">←</button>
+                ${Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map(i => `
+                    <button onclick="loadProducts(${i}, '${searchInput.value}')" class="px-3 py-1 rounded ${i === page ? 'bg-[#2F80ED] text-white' : 'hover:bg-gray-200'}">${i}</button>
+                `).join('')}
+                ${totalPages > 5 ? '<span>...</span>' : ''}
+                <button onclick="loadProducts(${page + 1}, '${searchInput.value}')" ${page === totalPages ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">Next →</button>
+            `;
+        }
+
+        // Add to Cart (Placeholder)
+        function addToCart(productId) {
+            alert(`Add to cart: Product ID ${productId}`);
+            // Implement cart functionality later
+        }
+
+        // Toggle Add Product Modal
+        addProductToggle.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+
+        // Handle Search Input
+        let debounceTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(() => {
+                currentPage = 1; // Reset to first page on new search
+                loadProducts(currentPage, searchInput.value);
+            }, 300); // 300ms debounce
+        });
+
+        // Handle Per Page Selection
+        perPageSelect.addEventListener('change', () => {
+            pageSize = parseInt(perPageSelect.value);
+            currentPage = 1; // Reset to first page
+            loadProducts(currentPage, searchInput.value);
+        });
+
+        // Add Product Form Submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/products`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Product added successfully!');
+                    modal.classList.add('hidden');
+                    form.reset();
+                    loadProducts(currentPage, searchInput.value); // Refresh product list
+                } else {
+                    const error = await response.text();
+                    alert('Failed to add product: ' + error);
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Something went wrong');
+            }
+        });
+
+        // Close Modal
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        // Initial Load
+        loadProducts();
+    </script>
+}

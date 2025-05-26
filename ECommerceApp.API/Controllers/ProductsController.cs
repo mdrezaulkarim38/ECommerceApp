@@ -17,15 +17,20 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddProduct([FromForm] ProductDto productDto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         string? imageUrl = null;
         if (productDto.ImageFile != null)
         {
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", productDto.ImageFile.FileName);
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(productDto.ImageFile.FileName);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!); 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await productDto.ImageFile.CopyToAsync(stream);
             }
-            imageUrl = $"/images/{productDto.ImageFile.FileName}";
+            imageUrl = $"/images/{fileName}";
         }
 
         var product = new Product
@@ -41,15 +46,28 @@ public class ProductsController : ControllerBase
 
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
-        return Ok(product);
+        return Ok(new
+        {
+            product.Id,
+            product.Name,
+            product.Slug,
+            product.Price,
+            DiscountedPrice = product.DiscountPercent.HasValue && product.DiscountStartDate <= DateTime.Today && DateTime.Today <= product.DiscountEndDate
+                ? product.Price * (1 - product.DiscountPercent.Value / 100)
+                : (decimal?)null,
+            product.ImageUrl
+        });
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetProducts(string? search, int page = 1, int pageSize = 8)
+    public async Task<IActionResult> GetProducts([FromQuery] string? search, [FromQuery] int page = 1, [FromQuery] int pageSize = 8)
     {
-        var query = _context.Products.AsQueryable();
+        if (page < 1 || pageSize < 1)
+            return BadRequest("Page and pageSize must be greater than 0");
+
+        var query = _context.Products.AsNoTracking().AsQueryable();
         if (!string.IsNullOrEmpty(search))
-            query = query.Where(p => p.Name!.Contains(search));
+            query = query.Where(p => p.Name!.Contains(search, StringComparison.OrdinalIgnoreCase));
 
         var total = await query.CountAsync();
         var products = await query
@@ -64,13 +82,13 @@ public class ProductsController : ControllerBase
             p.Name,
             p.Slug,
             p.Price,
-            DiscountedPrice = (p.DiscountPercent.HasValue && p.DiscountStartDate <= today && today <= p.DiscountEndDate)
+            DiscountedPrice = p.DiscountPercent.HasValue && p.DiscountStartDate.HasValue && p.DiscountEndDate.HasValue
+                && p.DiscountStartDate.Value <= today && today <= p.DiscountEndDate.Value
                 ? p.Price * (1 - p.DiscountPercent.Value / 100)
                 : (decimal?)null,
             p.ImageUrl
         }).ToList();
 
-        return Ok(new { total, products = productDtos });
+        return Ok(new { Total = total, Products = productDtos });
     }
 }
-
