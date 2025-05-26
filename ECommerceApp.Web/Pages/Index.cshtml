@@ -84,85 +84,76 @@
 </div>
 
 
-
 <!-- Add Product Modal -->
 <div id="add-product-modal" class="fixed bg-[rgba(0,0,0,0.4)] inset-0 flex items-center justify-center hidden z-50">
-    <div class="bg-white p-8 rounded-xl w-full max-w-4xl relative">
+    <div class="bg-white p-4 rounded-lg w-full max-w-2xl relative">
         <!-- Close Button -->
-        <button id="modal-close" class="absolute top-4 right-4 text-[#777777] hover:text-[#252C32] z-50">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
+        <button id="modal-close" class="absolute top-3 right-3 text-[#777777] hover:text-[#252C32] z-50">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
 
-        <h2 class="text-[24px] font-bold text-[#252C32] mb-2">Add New Product</h2>
-        <p class="text-sm text-[#5F6D7E] mb-6">Add description of your new product.</p>
+        <h2 class="text-lg font-bold text-[#252C32] mb-1">Add New Product</h2>
+        <p class="text-xs text-[#5F6D7E] mb-4">Add description of your new product.</p>
 
-        <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Row 1: Product Name -->
+        <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <!-- Product Name -->
             <div class="md:col-span-2">
-                <label class="block text-sm font-bold text-[#252C32] mb-1">Product Name</label>
-                <input type="text" required
-                    class="w-full border border-[#E5E9EB] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
+                <label class="block font-semibold mb-1">Product Name</label>
+                <input type="text" required class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
             </div>
 
-            <!-- Row 2: Slug + Price -->
+            <!-- Slug + Price -->
             <div>
-                <label class="block text-sm font-bold text-[#252C32] mb-1">Slug</label>
+                <label class="block font-semibold mb-1">Slug</label>
                 <div class="flex">
-                    <input type="text" required
-                        class="flex-1 border border-[#E5E9EB] p-3 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
+                    <input type="text" required class="flex-1 border border-[#E5E9EB] p-2 rounded-l-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
                     <button type="button" onclick="generateSlug()"
-                        class="bg-[#2F80ED] text-white border border-[#2F80ED] px-4 py-3 rounded-r-lg hover:bg-[#2568C1] text-sm font-semibold transition">
+                        class="bg-[#2F80ED] text-white border border-[#2F80ED] px-3 py-2 rounded-r-md hover:bg-[#2568C1] font-medium transition text-xs">
                         Generate
                     </button>
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-bold text-[#252C32] mb-1">Price</label>
-                <input type="number" step="0.01" required
-                    class="w-full border border-[#E5E9EB] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
+                <label class="block font-semibold mb-1">Price</label>
+                <input type="number" step="0.01" required class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
             </div>
 
-            <!-- Row 3: Discount Start + End with icon the problem is two icon is showing  -->
+            <!-- Discount Start + End -->
             <div class="relative">
-                <label class="block text-sm font-bold text-[#252C32] mb-1">Discount Start</label>
-                <input type="date" id="discount-start"
-                    class="w-full border border-[#E5E9EB] p-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
-                <svg class="absolute right-3 top-10 w-5 h-5 text-[#2F80ED] pointer-events-none" fill="none"
+                <label class="block font-semibold mb-1">Discount Start</label>
+                <input type="date" id="discount-start" class="w-full border border-[#E5E9EB] p-2 pr-8 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
+                <svg class="absolute right-2 top-[38px] w-4 h-4 text-[#2F80ED] pointer-events-none" fill="none"
                     stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
             </div>
             <div class="relative">
-                <label class="block text-sm font-bold text-[#252C32] mb-1">Discount End</label>
-                <input type="date" id="discount-end"
-                    class="w-full border border-[#E5E9EB] p-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
-                <svg class="absolute right-3 top-10 w-5 h-5 text-[#2F80ED] pointer-events-none" fill="none"
+                <label class="block font-semibold mb-1">Discount End</label>
+                <input type="date" id="discount-end" class="w-full border border-[#E5E9EB] p-2 pr-8 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
+                <svg class="absolute right-2 top-[38px] w-4 h-4 text-[#2F80ED] pointer-events-none" fill="none"
                     stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
             </div>
 
-            <!-- Row 4: Discount % + Image -->
+            <!-- Discount % + Image -->
             <div>
-                <label class="block text-sm font-bold text-[#252C32] mb-1">Discount Percentage</label>
-                <input type="number" step="0.01"
-                    class="w-full border border-[#E5E9EB] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
+                <label class="block font-semibold mb-1">Discount Percentage</label>
+                <input type="number" step="0.01" class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
             </div>
             <div>
-                <label class="block text-sm font-bold text-[#252C32] mb-1">Product Image</label>
-                <input type="file" accept="image/*"
-                    class="w-full border border-[#E5E9EB] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED]" />
+                <label class="block font-semibold mb-1">Product Image</label>
+                <input type="file" accept="image/*" class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
             </div>
 
             <!-- Submit Button -->
-            <div class="col-span-1 md:col-span-2">
+            <div class="md:col-span-2">
                 <button type="submit"
-                    class="bg-[#2F80ED] text-white font-semibold text-[16px] px-4 py-3 rounded-lg w-full hover:bg-[#2568C1] transition">
+                    class="bg-[#2F80ED] text-white font-semibold text-sm px-3 py-2 rounded-md w-full hover:bg-[#2568C1] transition">
                     Add Product
                 </button>
             </div>
