@@ -67,7 +67,9 @@ public class ProductsController : ControllerBase
 
         var query = _context.Products.AsNoTracking().AsQueryable();
         if (!string.IsNullOrEmpty(search))
-            query = query.Where(p => p.Name!.Contains(search, StringComparison.OrdinalIgnoreCase));
+        {
+            query = query.Where(p => EF.Functions.Like(p.Name, $"%{search}%"));
+        }
 
         var total = await query.CountAsync();
         var products = await query
