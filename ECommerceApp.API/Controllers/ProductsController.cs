@@ -91,4 +91,21 @@ public class ProductsController : ControllerBase
 
         return Ok(new { Total = total, Products = productDtos });
     }
+    
+    [HttpGet("dashboard")]
+    public async Task<IActionResult> GetDashboardStats()
+    {
+        var totalProducts = await _context.Products.CountAsync();
+        var totalVendors = 10; // Replace with actual query if Vendor model exists
+        var uniqueProducts = await _context.Products
+            .GroupBy(p => p.Name)
+            .CountAsync();
+
+        return Ok(new
+        {
+            TotalProducts = totalProducts,
+            TotalVendors = totalVendors,
+            UniqueProducts = uniqueProducts
+        });
+    }
 }
