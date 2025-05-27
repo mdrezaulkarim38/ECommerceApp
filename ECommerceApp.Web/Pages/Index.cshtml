@@ -194,249 +194,392 @@
 </div>
 
 <script>
-    const API_BASE_URL = 'http://localhost:5099';
-    const form = document.getElementById('add-product-form');
-    const modal = document.getElementById('add-product-modal');
-    const closeModalBtn = document.getElementById('modal-close');
-    const addProductToggle = document.getElementById('add-product-toggle');
-    const searchInput = document.querySelector('input[placeholder="Search product by name..."]');
-    const productGrid = document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4');
-    const resultsCount = document.querySelector('.text-black.font-bold.text-lg');
-    const paginationContainer = document.querySelector('.flex.items-center.gap-2.text-sm');
-    const perPageSelect = document.getElementById('per-page');
-    const totalProductCard = document.getElementById('totalProduct');
-    const totalVendorCard = document.getElementById('totalVendor');
-    const uniqueProductCard = document.getElementById('totalUniqueProduct');
-    const userId = '1';
-    let cartItems = [];
+    document.addEventListener('DOMContentLoaded', () => {
+        const API_BASE_URL = 'http://localhost:5099';
+        const form = document.getElementById('add-product-form');
+        const modal = document.getElementById('add-product-modal');
+        const closeModalBtn = document.getElementById('modal-close');
+        const addProductToggle = document.getElementById('add-product-toggle');
+        const searchInput = document.querySelector('input[placeholder="Search product by name..."]');
+        const productGrid = document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4');
+        const resultsCount = document.querySelector('.text-black.font-bold.text-lg');
+        const paginationContainer = document.querySelector('.flex.items-center.gap-2.text-sm');
+        const perPageSelect = document.getElementById('per-page');
+        const totalProductCard = document.getElementById('totalProduct');
+        const totalVendorCard = document.getElementById('totalVendor');
+        const uniqueProductCard = document.getElementById('totalUniqueProduct');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartCount = document.getElementById('cart-count');
+        const cartSubtotal = document.getElementById('cart-subtotal');
+        const userId = '1';
 
-    let currentPage = 1;
-    let pageSize = parseInt(perPageSelect.value) || 8;
+        let currentPage = 1;
+        let pageSize = parseInt(perPageSelect?.value) || 8;
+        let cartItems = [];
 
-    function generateSlug() {
-        const nameInput = document.querySelector('input[name="Name"]');
-        const slugInput = document.querySelector('input[name="Slug"]');
-        if (nameInput && slugInput) {
-            slugInput.value = nameInput.value
-                .trim()
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^a-z0-9\-]/g, '');
-        } else {
-            console.warn('Inputs not found');
-        }
-    }
+        // Verify DOM elements
+        console.log('DOM elements initialized:', {
+            cartItemsContainer: !!cartItemsContainer,
+            cartCount: !!cartCount,
+            cartSubtotal: !!cartSubtotal,
+            paginationContainer: !!paginationContainer
+        });
 
-    async function loadDashboardStats() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/products/dashboard`, {
-                method: 'GET',
-                headers: { 'Accept': 'application/json' }
-            });
-            if (!response.ok) {
-                throw new Error(`Failed to fetch dashboard stats: ${await response.text()}`);
-            }
-            const data = await response.json();
-            totalProductCard.textContent = `Total Product: ${data.totalProducts}`;
-            totalVendorCard.textContent = `Total Vendor: ${data.totalVendors}`;
-            uniqueProductCard.textContent = `Unique Product: ${data.uniqueProducts}`;
-        } catch (err) {
-            console.error('Error loading dashboard stats:', err);
-            totalProductCard.textContent = 'Total Product: Error';
-            totalVendorCard.textContent = 'Total Vendor: Error';
-            uniqueProductCard.textContent = 'Unique Product: Error';
-        }
-    }
-
-    async function loadProducts(page = 1, search = '') {
-        try {
-            const url = `${API_BASE_URL}/api/products?page=${page}&pageSize=${pageSize}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: { 'Accept': 'application/json' }
-            });
-            if (!response.ok) {
-                throw new Error(`Failed to fetch products: ${await response.text()}`);
-            }
-            const data = await response.json();
-            await loadCart();
-            renderProducts(data.products || [], data.total || 0, page);
-        } catch (err) {
-            console.error('Error loading products:', err);
-            resultsCount.textContent = 'Error loading products';
-            productGrid.innerHTML = '';
-        }
-    }
-
-    async function loadCart() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/cart/${userId}`, {
-                method: 'GET',
-                headers: { 'Accept': 'application/json' }
-            });
-            if (!response.ok) {
-                throw new Error(`Failed to fetch cart: ${await response.text()}`);
-            }
-            cartItems = await response.json();
-            renderProducts(cartItems, cartItems.length, currentPage); // Update products with cart info
-        } catch (err) {
-            console.error('Error loading cart:', err);
-            cartItems = [];
-        }
-    }
-
-    function renderProducts(products, total, page) {
-        if (!Array.isArray(products)) {
-            console.error('Products is not an array:', products);
-            productGrid.innerHTML = '';
-            resultsCount.textContent = 'No products available';
-            paginationContainer.innerHTML = '';
-            return;
-        }
-
-        productGrid.innerHTML = products.map(product => {
-            const discountedPrice = product.discountedPrice ? `$${product.discountedPrice.toFixed(2)}` : '';
-            const originalPrice = product.price ? `$${product.price.toFixed(2)}` : '';
-            const cartItem = cartItems.find(item => item.productId === product.id);
-            const quantity = cartItem ? cartItem.quantity : 0;
-
-            return `
-            <div class="rounded-lg overflow-hidden shadow-sm flex flex-col">
-                <img src="${API_BASE_URL}${product.imageUrl || '/images/placeholder.jpg'}" alt="${product.name}" class="w-full h-48 object-cover" />
-                <div class="p-4 flex flex-col gap-2">
-                    <h3 class="font-semibold text-sm text-[#252C32]">${product.name}</h3>
-                    <div class="flex items-center space-x-2 text-sm">
-                        <span class="text-[#2F80ED] font-semibold">${discountedPrice || originalPrice}</span>
-                        ${discountedPrice ? `<del class="text-gray-500">${originalPrice}</del>` : ''}
-                    </div>
-                    ${quantity > 0 ? `
-                        <div class="inline-flex items-center text-sm mt-2">
-                            <button onclick="updateQuantity(${product.id}, ${quantity - 1})" class="px-2 py-1 text-white bg-[#2F80ED] rounded-l hover:bg-[#1E63B0] transition">-</button>
-                            <span class="px-3 py-1 text-white bg-[#2F80ED]">${quantity}</span>
-                            <button onclick="updateQuantity(${product.id}, ${quantity + 1})" class="px-2 py-1 text-white bg-[#2F80ED] rounded-r hover:bg-[#1E63B0] transition">+</button>
-                        </div>
-                    ` : `
-                        <button onclick="addToCart(${product.id})" class="mt-2 w-fit px-3 py-1 text-sm text-black bg-white border border-gray-300 rounded hover:bg-[#2F80ED] hover:text-white transition">
-                            Add to Cart
-                        </button>
-                    `}
-                </div>
-            </div>
-        `;
-        }).join('');
-
-        const start = (page - 1) * pageSize + 1;
-        const end = Math.min(page * pageSize, total);
-        resultsCount.textContent = `Showing ${start}–${end} of ${total} results`;
-
-        const totalPages = Math.ceil(total / pageSize);
-        paginationContainer.innerHTML = `
-        <button onclick="loadProducts(${page - 1}, '${searchInput.value}')" ${page === 1 ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">←</button>
-        ${Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map(i => `
-            <button onclick="loadProducts(${i}, '${searchInput.value}')" class="px-3 py-1 rounded ${i === page ? 'bg-[#2F80ED] text-white' : 'hover:bg-gray-200'}">${i}</button>
-        `).join('')}
-        ${totalPages > 5 ? '<span>...</span>' : ''}
-        <button onclick="loadProducts(${page + 1}, '${searchInput.value}')" ${page === totalPages ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">Next →</button>
-    `;
-    }
-
-    async function addToCart(productId) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/cart`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    userId: userId,
-                    productId: productId,
-                    quantity: 1
-                })
-            });
-            if (!response.ok) {
-                throw new Error(`Failed to add to cart: ${await response.text()}`);
-            }
-            await loadCart();
-            await loadProducts(currentPage, searchInput.value);
-        } catch (err) {
-            console.error('Error adding to cart:', err);
-            alert('Failed to add product to cart');
-        }
-    }
-
-    async function updateQuantity(productId, newQuantity) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/cart/${userId}/${productId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ quantity: newQuantity })
-            });
-            if (!response.ok) {
-                throw new Error(`Failed to update cart: ${await response.text()}`);
-            }
-            await loadCart();
-            await loadProducts(currentPage, searchInput.value);
-        } catch (err) {
-            console.error('Error updating cart:', err);
-            alert('Failed to update cart');
-        }
-    }
-
-
-    document.querySelector('input[name="Name"]').addEventListener('input', generateSlug);
-
-    addProductToggle.addEventListener('click', () => {
-        modal.classList.remove('hidden');
-    });
-
-    closeModalBtn.addEventListener('click', () => {
-        modal.classList.add('hidden');
-    });
-
-    let debounceTimeout;
-    searchInput.addEventListener('input', () => {
-        clearTimeout(debounceTimeout);
-        debounceTimeout = setTimeout(() => {
-            currentPage = 1;
-            loadProducts(currentPage, searchInput.value);
-        }, 300);
-    });
-
-    perPageSelect.addEventListener('change', () => {
-        pageSize = parseInt(perPageSelect.value);
-        currentPage = 1;
-        loadProducts(currentPage, searchInput.value);
-    });
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(form);
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/products`, {
-                method: 'POST',
-                body: formData
-            });
-            if (response.ok) {
-                alert('Product added successfully!');
-                modal.classList.add('hidden');
-                form.reset();
-                loadProducts(currentPage, searchInput.value);
-                loadDashboardStats();
+        function generateSlug() {
+            const nameInput = document.querySelector('input[name="Name"]');
+            const slugInput = document.querySelector('input[name="Slug"]');
+            if (nameInput && slugInput) {
+                slugInput.value = nameInput.value
+                    .trim()
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9\-]/g, '');
             } else {
-                const error = await response.text();
-                alert('Failed to add product: ' + error);
+                console.warn('Slug inputs not found');
             }
-        } catch (err) {
-            console.error('Error:', err);
-            alert('Something went wrong');
         }
-    });
 
-    loadProducts();
-    loadDashboardStats();
-    loadCart();
+        async function loadDashboardStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/products/dashboard`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch dashboard stats: ${await response.text()}`);
+                }
+                const data = await response.json();
+                totalProductCard.textContent = `Total Product: ${data.totalProducts}`;
+                totalVendorCard.textContent = `Total Vendor: ${data.totalVendors}`;
+                uniqueProductCard.textContent = `Unique Product: ${data.uniqueProducts}`;
+            } catch (err) {
+                console.error('Error loading dashboard stats:', err);
+                totalProductCard.textContent = 'Total Product: Error';
+                totalVendorCard.textContent = 'Total Vendor: Error';
+                uniqueProductCard.textContent = 'Unique Product: Error';
+            }
+        }
+
+        async function loadProducts(page = 1, search = '') {
+            try {
+                const url = `${API_BASE_URL}/api/products?page=${page}&pageSize=${pageSize}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
+                console.log('Fetching products:', url);
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch products: ${await response.text()}`);
+                }
+                const data = await response.json();
+                await loadCart();
+                renderProducts(data.products || [], data.total || 0, page);
+            } catch (err) {
+                console.error('Error loading products:', err);
+                resultsCount.textContent = 'Error loading products';
+                productGrid.innerHTML = '';
+            }
+        }
+
+        async function loadCart() {
+            try {
+                console.log('Loading cart for user:', userId);
+                const response = await fetch(`${API_BASE_URL}/api/cart/${userId}`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch cart: ${await response.text()}`);
+                }
+                cartItems = await response.json();
+                console.log('Cart items loaded:', cartItems);
+                renderCartItems(cartItems);
+            } catch (err) {
+                console.error('Error loading cart:', err);
+                cartItems = [];
+                renderCartItems([]);
+            }
+        }
+
+        function renderProducts(products, total, page) {
+            if (!Array.isArray(products)) {
+                console.error('Products is not an array:', products);
+                productGrid.innerHTML = '';
+                resultsCount.textContent = 'No products available';
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            productGrid.innerHTML = products.map(product => {
+                const discountedPrice = product.discountedPrice ? `$${product.discountedPrice.toFixed(2)}` : '';
+                const originalPrice = product.price ? `$${product.price.toFixed(2)}` : '';
+                const cartItem = cartItems.find(item => item.productId === product.id);
+                const quantity = cartItem ? cartItem.quantity : 0;
+
+                return `
+                <div class="rounded-lg overflow-hidden shadow-sm flex flex-col" data-product-id="${product.id}">
+                    <img src="${API_BASE_URL}${product.imageUrl || '/images/placeholder.jpg'}" alt="${product.name}" class="w-full h-48 object-cover" />
+                    <div class="p-4 flex flex-col gap-2">
+                        <h3 class="font-semibold text-sm text-[#252C32]">${product.name}</h3>
+                        <div class="flex items-center space-x-2 text-sm">
+                            <span class="text-[#2F80ED] font-semibold">${discountedPrice || originalPrice}</span>
+                            ${discountedPrice ? `<del class="text-gray-500">${originalPrice}</del>` : ''}
+                        </div>
+                        ${quantity > 0 ? `
+                            <div class="inline-flex items-center text-sm mt-2">
+                                <button class="decrement-btn px-2 py-1 text-white bg-[#2F80ED] rounded-l hover:bg-[#1E63B0] transition">-</button>
+                                <span class="px-3 py-1 text-white bg-[#2F80ED]">${quantity}</span>
+                                <button class="increment-btn px-2 py-1 text-white bg-[#2F80ED] rounded-r hover:bg-[#1E63B0] transition">+</button>
+                            </div>
+                        ` : `
+                            <button class="add-to-cart-btn mt-2 w-fit px-3 py-1 text-sm text-black bg-white border border-gray-300 rounded hover:bg-[#2F80ED] hover:text-white transition">
+                                Add to Cart
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            }).join('');
+
+            const start = (page - 1) * pageSize + 1;
+            const end = Math.min(page * pageSize, total);
+            resultsCount.textContent = `Showing ${start}–${end} of ${total} results`;
+
+            const totalPages = Math.ceil(total / pageSize);
+            paginationContainer.innerHTML = `
+            <button class="pagination-btn" data-page="${page - 1}" ${page === 1 ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">←</button>
+            ${Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map(i => `
+                <button class="pagination-btn" data-page="${i}" class="px-3 py-1 rounded ${i === page ? 'bg-[#2F80ED] text-white' : 'hover:bg-gray-200'}">${i}</button>
+            `).join('')}
+            ${totalPages > 5 ? '<span>...</span>' : ''}
+            <button class="pagination-btn" data-page="${page + 1}" ${page === totalPages ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">Next →</button>
+        `;
+
+            // Attach event listeners
+            attachEventListeners();
+        }
+
+        function renderCartItems(cartItems) {
+            if (!cartItemsContainer || !cartCount || !cartSubtotal) {
+                console.error('Cart UI elements not found:', {
+                    cartItemsContainer: !!cartItemsContainer,
+                    cartCount: !!cartCount,
+                    cartSubtotal: !!cartSubtotal
+                });
+                return;
+            }
+
+            if (!Array.isArray(cartItems) || cartItems.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-sm text-[#777777]">Your cart is empty</p>';
+                cartCount.textContent = '0';
+                cartSubtotal.textContent = '0.00';
+                console.log('Cart is empty');
+                return;
+            }
+
+            let totalItems = 0;
+            let subtotal = 0;
+
+            cartItemsContainer.innerHTML = cartItems.map(item => {
+                const product = item.product;
+                const price = product.discountedPrice || product.price;
+                const itemTotal = price * item.quantity;
+                subtotal += itemTotal;
+                totalItems += item.quantity;
+
+                return `
+                <div class="mb-4 pb-4 border-b border-dashed border-[#E5E9EB]">
+                    <div class="flex items-center justify-between">
+                        <div class="w-16 h-16 flex-shrink-0 rounded overflow-hidden bg-gray-100">
+                            <img src="${API_BASE_URL}${product.imageUrl || '/images/placeholder.jpg'}" alt="${product.name}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="font-medium text-[#252C32] text-sm">${product.name}</p>
+                            <p class="text-xs text-[#5F6D7E] mt-1">Qty: ${item.quantity}</p>
+                        </div>
+                        <div class="text-right text-sm font-semibold text-[#252C32]">
+                            $${price.toFixed(2)}
+                        </div>
+                    </div>
+                </div>
+            `;
+            }).join('');
+
+            cartCount.textContent = totalItems;
+            cartSubtotal.textContent = subtotal.toFixed(2);
+            console.log('Cart rendered:', { totalItems, subtotal });
+        }
+
+        async function addToCart(productId) {
+            try {
+                console.log('Adding to cart:', productId);
+                const response = await fetch(`${API_BASE_URL}/api/cart`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        productId: productId,
+                        quantity: 1
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error(`Failed to add to cart: ${await response.text()}`);
+                }
+                await loadCart();
+                await loadProducts(currentPage, searchInput?.value || '');
+                if (window.openCartSidebar) {
+                    window.openCartSidebar();
+                } else {
+                    console.error('window.openCartSidebar not found, falling back to direct toggle');
+                    const cartSidebar = document.getElementById('cart-sidebar');
+                    if (cartSidebar) {
+                        cartSidebar.classList.remove('translate-x-full');
+                        cartSidebar.classList.add('translate-x-0');
+                        console.log('Cart sidebar opened via fallback');
+                    } else {
+                        console.error('Cart sidebar DOM element not found');
+                    }
+                }
+            } catch (err) {
+                console.error('Error adding to cart:', err);
+                alert('Failed to add product to cart');
+            }
+        }
+
+        async function updateQuantity(productId, newQuantity) {
+            try {
+                console.log('Updating quantity:', { productId, newQuantity });
+                const response = await fetch(`${API_BASE_URL}/api/cart/${userId}/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ quantity: newQuantity })
+                });
+                if (!response.ok) {
+                    throw new Error(`Failed to update cart: ${await response.text()}`);
+                }
+                await loadCart();
+                await loadProducts(currentPage, searchInput?.value || '');
+            } catch (err) {
+                console.error('Error updating cart:', err);
+                alert('Failed to update cart');
+            }
+        }
+
+        function attachEventListeners() {
+            // Handle Add to Cart buttons
+            const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const productId = parseInt(button.closest('[data-product-id]').dataset.productId);
+                    console.log('Add to cart clicked for product:', productId);
+                    addToCart(productId);
+                });
+            });
+
+            // Handle decrement buttons
+            const decrementButtons = document.querySelectorAll('.decrement-btn');
+            decrementButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const productId = parseInt(button.closest('[data-product-id]').dataset.productId);
+                    const currentQuantity = parseInt(button.nextElementSibling.textContent);
+                    console.log('Decrement clicked for product:', productId, 'New quantity:', currentQuantity - 1);
+                    updateQuantity(productId, currentQuantity - 1);
+                });
+            });
+
+            // Handle increment buttons
+            const incrementButtons = document.querySelectorAll('.increment-btn');
+            incrementButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const productId = parseInt(button.closest('[data-product-id]').dataset.productId);
+                    const currentQuantity = parseInt(button.previousElementSibling.textContent);
+                    console.log('Increment clicked for product:', productId, 'New quantity:', currentQuantity + 1);
+                    updateQuantity(productId, currentQuantity + 1);
+                });
+            });
+
+            // Handle pagination buttons
+            const paginationButtons = document.querySelectorAll('.pagination-btn');
+            paginationButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const page = parseInt(button.dataset.page);
+                    if (!isNaN(page)) {
+                        console.log('Pagination clicked for page:', page);
+                        loadProducts(page, searchInput?.value || '');
+                    }
+                });
+            });
+        }
+
+        if (document.querySelector('input[name="Name"]')) {
+            document.querySelector('input[name="Name"]').addEventListener('input', generateSlug);
+        }
+
+        if (addProductToggle) {
+            addProductToggle.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+            });
+        }
+
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+        }
+
+        if (searchInput) {
+            let debounceTimeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(debounceTimeout);
+                debounceTimeout = setTimeout(() => {
+                    currentPage = 1;
+                    loadProducts(currentPage, searchInput.value);
+                }, 300);
+            });
+        }
+
+        if (perPageSelect) {
+            perPageSelect.addEventListener('change', () => {
+                pageSize = parseInt(perPageSelect.value);
+                currentPage = 1;
+                loadProducts(currentPage, searchInput?.value || '');
+            });
+        }
+
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/products`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (response.ok) {
+                        alert('Product added successfully!');
+                        modal.classList.add('hidden');
+                        form.reset();
+                        loadProducts(currentPage, searchInput?.value || '');
+                        loadDashboardStats();
+                    } else {
+                        const error = await response.text();
+                        alert('Failed to add product: ' + error);
+                    }
+                } catch (err) {
+                    console.error('Error:', err);
+                    alert('Something went wrong');
+                }
+            });
+        }
+
+        loadProducts();
+        loadDashboardStats();
+        loadCart();
+    });
 </script>
