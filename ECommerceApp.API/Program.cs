@@ -1,5 +1,7 @@
 using ECommerceApp.API.Data;
+using ECommerceApp.API.Interfaces;
 using ECommerceApp.API.Middleware;
+using ECommerceApp.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +23,10 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
+
 var app = builder.Build();
 app.UseCors("AllowLocalhost5026");
 if (app.Environment.IsDevelopment())
