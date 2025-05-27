@@ -116,21 +116,21 @@
                 totalItems += item.quantity;
 
                 return `
-                <div class="mb-4 pb-4 border-b border-dashed border-[#E5E9EB]">
-                    <div class="flex items-center justify-between">
-                        <div class="w-16 h-16 flex-shrink-0 rounded overflow-hidden bg-gray-100">
-                            <img src="${API_BASE_URL_Layout}${product.imageUrl || '/images/placeholder.jpg'}" alt="${product.name}" class="w-full h-full object-cover">
-                        </div>
-                        <div class="ml-4 flex-1">
-                            <p class="font-medium text-[#252C32] text-sm">${product.name}</p>
-                            <p class="text-xs text-[#5F6D7E] mt-1">Qty: ${item.quantity}</p>
-                        </div>
-                        <div class="text-right text-sm font-semibold text-[#252C32]">
-                            $${price.toFixed(2)}
-                        </div>
+            <div class="mb-4 pb-4 border-b border-dashed border-[#E5E9EB]">
+                <div class="flex items-center justify-between">
+                    <div class="w-16 h-16 flex-shrink-0 rounded overflow-hidden bg-gray-100">
+                        <img src="${API_BASE_URL_Layout}${product.imageUrl || '/images/placeholder.jpg'}" alt="${product.name}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <p class="font-medium text-[#252C32] text-sm">${product.name}</p>
+                        <p class="text-xs text-[#5F6D7E] mt-1">Qty: ${item.quantity}</p>
+                    </div>
+                    <div class="text-right text-sm font-semibold text-[#252C32]">
+                        $${price.toFixed(2)}
                     </div>
                 </div>
-            `;
+            </div>
+        `;
             }).join('');
 
             cartCount.textContent = totalItems;
@@ -138,17 +138,17 @@
         }
 
         cartToggle?.addEventListener('click', () => {
-            cartSidebar.classList.toggle('translate-x-full');
-            cartSidebar.classList.toggle('translate-x-0');
-            if (!cartSidebar.classList.contains('translate-x-full')) {
-                loadCart();
-            }
+            cartSidebar.classList.remove('translate-x-full');
+            cartSidebar.classList.add('translate-x-0');
+            loadCart();
         });
 
         cartClose?.addEventListener('click', () => {
             cartSidebar.classList.add('translate-x-full');
             cartSidebar.classList.remove('translate-x-0');
         });
+        
+        loadCart();
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
