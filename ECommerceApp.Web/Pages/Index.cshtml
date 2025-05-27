@@ -1,7 +1,7 @@
 ﻿@page
 @model IndexModel
 @{
-ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home page";
 }
 <style>
     input[type="date"]::-webkit-calendar-picker-indicator {
@@ -26,7 +26,7 @@ ViewData["Title"] = "Home page";
     <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl shadow-sm p-6 text-white">
         <div class="flex items-center mb-3">
             <svg class="w-8 h-8 text-white mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                 xmlns="http://www.w3.org/2000/svg">
+                xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h18v4H3V3zm0 6h18v12H3V9z" />
             </svg>
         </div>
@@ -36,9 +36,9 @@ ViewData["Title"] = "Home page";
     <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl shadow-sm p-6 text-white">
         <div class="flex items-center mb-3">
             <svg class="w-8 h-8 text-white mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                 xmlns="http://www.w3.org/2000/svg">
+                xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" />
+                    d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" />
             </svg>
         </div>
         <h3 id="totalVendor" class="text-[18px] font-semibold">Total Vendor: 10</h3>
@@ -47,9 +47,9 @@ ViewData["Title"] = "Home page";
     <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl shadow-sm p-6 text-white">
         <div class="flex items-center mb-3">
             <svg class="w-8 h-8 text-white mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                 xmlns="http://www.w3.org/2000/svg">
+                xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0H4" />
+                    d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0H4" />
             </svg>
         </div>
         <h3 id="totalUniqueProduct" class="text-[18px] font-semibold">Unique Product: 6</h3>
@@ -60,17 +60,17 @@ ViewData["Title"] = "Home page";
 <div class="flex flex-col md:flex-row items-stretch md:items-center gap-4 mb-6 mt-[25px]">
     <div class="relative flex-1">
         <input type="text" placeholder="Search product by name..."
-               class="w-full pl-4 pr-10 py-2 border border-gray-300 bg-gray-100 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            class="w-full pl-4 pr-10 py-2 border border-gray-300 bg-gray-100 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         <svg class="w-5 h-5 text-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none"
-             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103 10.5a7.5 7.5 0 0013.15 6.15z" />
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103 10.5a7.5 7.5 0 0013.15 6.15z" />
         </svg>
     </div>
     <button id="add-product-toggle"
-            class="group flex items-center justify-center px-4 py-2 border border-blue-500 text-blue-500 rounded-md text-sm font-medium hover:bg-blue-500 hover:text-white transition">
+        class="group flex items-center justify-center px-4 py-2 border border-blue-500 text-blue-500 rounded-md text-sm font-medium hover:bg-blue-500 hover:text-white transition">
         <svg class="w-4 h-4 mr-2 text-blue-500 group-hover:text-white transition" fill="none" stroke="currentColor"
-             stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
         </svg>
         Add Product
@@ -78,7 +78,7 @@ ViewData["Title"] = "Home page";
 </div>
 
 <div id="add-product-modal"
-     class="fixed p-10 bg-[rgba(0,0,0,0.4)] inset-0 flex items-center justify-center hidden z-50">
+    class="fixed p-10 bg-[rgba(0,0,0,0.4)] inset-0 flex items-center justify-center hidden z-50">
     <div class="bg-white p-10 rounded-lg w-full max-w-2xl relative">
         <button id="modal-close" class="absolute top-3 right-3 text-[#777777] hover:text-[#252C32] z-50">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,15 +91,15 @@ ViewData["Title"] = "Home page";
             <div class="md:col-span-2">
                 <label class="block font-semibold mb-1">Product Name</label>
                 <input type="text" name="Name" placeholder="Product Name" required
-                       class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
+                    class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
             </div>
             <div>
                 <label class="block font-semibold mb-1">Slug</label>
                 <div class="flex">
                     <input type="text" name="Slug" placeholder="product-name" required
-                           class="flex-1 border border-[#E5E9EB] p-2 rounded-l-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
+                        class="flex-1 border border-[#E5E9EB] p-2 rounded-l-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
                     <button type="button" onclick="generateSlug()"
-                            class="bg-[#2F80ED] text-white border border-[#2F80ED] px-3 py-2 rounded-r-md hover:bg-[#2568C1] font-medium transition text-xs">
+                        class="bg-[#2F80ED] text-white border border-[#2F80ED] px-3 py-2 rounded-r-md hover:bg-[#2568C1] font-medium transition text-xs">
                         Generate
                     </button>
                 </div>
@@ -107,41 +107,41 @@ ViewData["Title"] = "Home page";
             <div>
                 <label class="block font-semibold mb-1">Price</label>
                 <input type="number" name="Price" placeholder="Price" step="0.01" required
-                       class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
+                    class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
             </div>
             <div class="relative">
                 <label class="block font-semibold mb-1">Discount Start</label>
                 <input type="date" name="DiscountStartDate" id="discount-start"
-                       class="w-full border border-[#E5E9EB] p-2 pr-8 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
+                    class="w-full border border-[#E5E9EB] p-2 pr-8 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
                 <svg class="absolute right-2 top-[38px] w-4 h-4 text-[#2F80ED] pointer-events-none" fill="none"
-                     stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
             </div>
             <div class="relative">
                 <label class="block font-semibold mb-1">Discount End</label>
                 <input type="date" name="DiscountEndDate" id="discount-end"
-                       class="w-full border border-[#E5E9EB] p-2 pr-8 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
+                    class="w-full border border-[#E5E9EB] p-2 pr-8 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
                 <svg class="absolute right-2 top-[38px] w-4 h-4 text-[#2F80ED] pointer-events-none" fill="none"
-                     stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
             </div>
             <div>
                 <label class="block font-semibold mb-1">Discount Percentage</label>
                 <input type="number" name="DiscountPercent" placeholder="Discount Percentage" step="0.01"
-                       class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
+                    class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
             </div>
             <div>
                 <label class="block font-semibold mb-1">Product Image</label>
                 <input type="file" name="ImageFile" accept="image/*"
-                       class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
+                    class="w-full border border-[#E5E9EB] p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
             </div>
             <div class="md:col-span-2">
                 <button type="submit"
-                        class="bg-[#2F80ED] text-white font-semibold text-sm px-3 py-2 rounded-md w-full hover:bg-[#2568C1] transition">
+                    class="bg-[#2F80ED] text-white font-semibold text-sm px-3 py-2 rounded-md w-full hover:bg-[#2568C1] transition">
                     Add Product
                 </button>
             </div>
@@ -207,6 +207,8 @@ ViewData["Title"] = "Home page";
     const totalProductCard = document.getElementById('totalProduct');
     const totalVendorCard = document.getElementById('totalVendor');
     const uniqueProductCard = document.getElementById('totalUniqueProduct');
+    const userId = '1';
+    let cartItems = [];
 
     let currentPage = 1;
     let pageSize = parseInt(perPageSelect.value) || 8;
@@ -257,11 +259,29 @@ ViewData["Title"] = "Home page";
                 throw new Error(`Failed to fetch products: ${await response.text()}`);
             }
             const data = await response.json();
+            await loadCart();
             renderProducts(data.products || [], data.total || 0, page);
         } catch (err) {
             console.error('Error loading products:', err);
             resultsCount.textContent = 'Error loading products';
             productGrid.innerHTML = '';
+        }
+    }
+
+    async function loadCart() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/cart/${userId}`, {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to fetch cart: ${await response.text()}`);
+            }
+            cartItems = await response.json();
+            renderProducts(cartItems, cartItems.length, currentPage); // Update products with cart info
+        } catch (err) {
+            console.error('Error loading cart:', err);
+            cartItems = [];
         }
     }
 
@@ -274,25 +294,35 @@ ViewData["Title"] = "Home page";
             return;
         }
 
-        console.log(products);
         productGrid.innerHTML = products.map(product => {
             const discountedPrice = product.discountedPrice ? `$${product.discountedPrice.toFixed(2)}` : '';
             const originalPrice = product.price ? `$${product.price.toFixed(2)}` : '';
+            const cartItem = cartItems.find(item => item.productId === product.id);
+            const quantity = cartItem ? cartItem.quantity : 0;
+
             return `
-                <div class="rounded-lg overflow-hidden shadow-sm flex flex-col">
-                    <img src="${API_BASE_URL}${product.imageUrl || '/images/placeholder.jpg'}" alt="${product.name}" class="w-full h-48 object-cover" />
-                    <div class="p-4 flex flex-col gap-2">
-                        <h3 class="font-semibold text-sm text-[#252C32]">${product.name}</h3>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <span class="text-[#2F80ED] font-semibold">${discountedPrice || originalPrice}</span>
-                            ${discountedPrice ? `<del class="text-gray-500">${originalPrice}</del>` : ''}
+            <div class="rounded-lg overflow-hidden shadow-sm flex flex-col">
+                <img src="${API_BASE_URL}${product.imageUrl || '/images/placeholder.jpg'}" alt="${product.name}" class="w-full h-48 object-cover" />
+                <div class="p-4 flex flex-col gap-2">
+                    <h3 class="font-semibold text-sm text-[#252C32]">${product.name}</h3>
+                    <div class="flex items-center space-x-2 text-sm">
+                        <span class="text-[#2F80ED] font-semibold">${discountedPrice || originalPrice}</span>
+                        ${discountedPrice ? `<del class="text-gray-500">${originalPrice}</del>` : ''}
+                    </div>
+                    ${quantity > 0 ? `
+                        <div class="inline-flex items-center text-sm mt-2">
+                            <button onclick="updateQuantity(${product.id}, ${quantity - 1})" class="px-2 py-1 text-white bg-[#2F80ED] rounded-l hover:bg-[#1E63B0] transition">-</button>
+                            <span class="px-3 py-1 text-white bg-[#2F80ED]">${quantity}</span>
+                            <button onclick="updateQuantity(${product.id}, ${quantity + 1})" class="px-2 py-1 text-white bg-[#2F80ED] rounded-r hover:bg-[#1E63B0] transition">+</button>
                         </div>
+                    ` : `
                         <button onclick="addToCart(${product.id})" class="mt-2 w-fit px-3 py-1 text-sm text-black bg-white border border-gray-300 rounded hover:bg-[#2F80ED] hover:text-white transition">
                             Add to Cart
                         </button>
-                    </div>
+                    `}
                 </div>
-            `;
+            </div>
+        `;
         }).join('');
 
         const start = (page - 1) * pageSize + 1;
@@ -301,18 +331,61 @@ ViewData["Title"] = "Home page";
 
         const totalPages = Math.ceil(total / pageSize);
         paginationContainer.innerHTML = `
-            <button onclick="loadProducts(${page - 1}, '${searchInput.value}')" ${page === 1 ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">←</button>
-            ${Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map(i => `
-                <button onclick="loadProducts(${i}, '${searchInput.value}')" class="px-3 py-1 rounded ${i === page ? 'bg-[#2F80ED] text-white' : 'hover:bg-gray-200'}">${i}</button>
-            `).join('')}
-            ${totalPages > 5 ? '<span>...</span>' : ''}
-            <button onclick="loadProducts(${page + 1}, '${searchInput.value}')" ${page === totalPages ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">Next →</button>
-        `;
+        <button onclick="loadProducts(${page - 1}, '${searchInput.value}')" ${page === 1 ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">←</button>
+        ${Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map(i => `
+            <button onclick="loadProducts(${i}, '${searchInput.value}')" class="px-3 py-1 rounded ${i === page ? 'bg-[#2F80ED] text-white' : 'hover:bg-gray-200'}">${i}</button>
+        `).join('')}
+        ${totalPages > 5 ? '<span>...</span>' : ''}
+        <button onclick="loadProducts(${page + 1}, '${searchInput.value}')" ${page === totalPages ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">Next →</button>
+    `;
     }
 
-    function addToCart(productId) {
-        alert(`Add to cart: Product ID ${productId}`);
+    async function addToCart(productId) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/cart`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    productId: productId,
+                    quantity: 1
+                })
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to add to cart: ${await response.text()}`);
+            }
+            await loadCart();
+            await loadProducts(currentPage, searchInput.value);
+        } catch (err) {
+            console.error('Error adding to cart:', err);
+            alert('Failed to add product to cart');
+        }
     }
+
+    async function updateQuantity(productId, newQuantity) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/cart/${userId}/${productId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ quantity: newQuantity })
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to update cart: ${await response.text()}`);
+            }
+            await loadCart();
+            await loadProducts(currentPage, searchInput.value);
+        } catch (err) {
+            console.error('Error updating cart:', err);
+            alert('Failed to update cart');
+        }
+    }
+
 
     document.querySelector('input[name="Name"]').addEventListener('input', generateSlug);
 
@@ -365,4 +438,5 @@ ViewData["Title"] = "Home page";
 
     loadProducts();
     loadDashboardStats();
+    loadCart();
 </script>
