@@ -75,20 +75,16 @@
 
         if (cartToggle && cartSidebar && cartClose) {
             cartToggle.addEventListener('click', () => {
-                console.log('Cart toggle clicked');
                 cartSidebar.classList.remove('translate-x-full');
                 cartSidebar.classList.add('translate-x-0');
             });
 
             cartClose.addEventListener('click', () => {
-                console.log('Cart close clicked');
                 cartSidebar.classList.add('translate-x-full');
                 cartSidebar.classList.remove('translate-x-0');
             });
 
-            // Expose a function to open the sidebar from Index.cshtml
             window.openCartSidebar = () => {
-                console.log('Opening cart sidebar via window.openCartSidebar');
                 cartSidebar.classList.remove('translate-x-full');
                 cartSidebar.classList.add('translate-x-0');
             };

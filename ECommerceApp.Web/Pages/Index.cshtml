@@ -31,7 +31,8 @@
             </svg>
         </div>
         <h3 id="totalProduct" class="text-[18px] font-semibold">Total Product: 50</h3>
-        <p class="text-[14px]">Warehouse has a total of 50 products today & the max capacity is 200.</p>
+        <p class="text-[14px]">Warehouse has a total of <span id="spanTotalProduct"></span> products today & the max
+            capacity is 200.</p>
     </div>
     <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl shadow-sm p-6 text-white">
         <div class="flex items-center mb-3">
@@ -42,7 +43,8 @@
             </svg>
         </div>
         <h3 id="totalVendor" class="text-[18px] font-semibold">Total Vendor: 10</h3>
-        <p class="text-[14px]">A total of 10 out of 10 vendors are available for supply now.</p>
+        <p class="text-[14px]">A total of 10 out of <span id="spanTotalVendor"></span> vendors are available for supply
+            now.</p>
     </div>
     <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl shadow-sm p-6 text-white">
         <div class="flex items-center mb-3">
@@ -95,11 +97,11 @@
             </div>
             <div>
                 <label class="block font-semibold mb-1">Slug</label>
-                <div class="flex">
+                <div class="flex flex-col sm:flex-row">
                     <input type="text" name="Slug" placeholder="product-name" required
-                        class="flex-1 border border-[#E5E9EB] p-2 rounded-l-md focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
+                        class="flex-1 border border-[#E5E9EB] p-2 rounded-t-md sm:rounded-l-md sm:rounded-tr-none focus:outline-none focus:ring-1 focus:ring-[#2F80ED]" />
                     <button type="button" onclick="generateSlug()"
-                        class="bg-[#2F80ED] text-white border border-[#2F80ED] px-3 py-2 rounded-r-md hover:bg-[#2568C1] font-medium transition text-xs">
+                        class="bg-[#2F80ED] text-white border border-[#2F80ED] px-3 py-2 rounded-b-md sm:rounded-r-md sm:rounded-bl-none hover:bg-[#2568C1] font-medium transition text-xs">
                         Generate
                     </button>
                 </div>
@@ -168,7 +170,6 @@
                 </button>
             </div>
         </div>
-        <!-- Other static product cards removed for brevity -->
     </div>
     <div class="flex justify-end items-center flex-wrap gap-4 pt-6">
         <div class="flex items-center gap-2 text-sm">
@@ -206,7 +207,9 @@
         const paginationContainer = document.querySelector('.flex.items-center.gap-2.text-sm');
         const perPageSelect = document.getElementById('per-page');
         const totalProductCard = document.getElementById('totalProduct');
+        const totalProductCardSpan = document.getElementById('spanTotalProduct');
         const totalVendorCard = document.getElementById('totalVendor');
+        const totalVendorCardSpan = document.getElementById('spanTotalVendor');
         const uniqueProductCard = document.getElementById('totalUniqueProduct');
         const cartItemsContainer = document.getElementById('cart-items');
         const cartCount = document.getElementById('cart-count');
@@ -216,14 +219,6 @@
         let currentPage = 1;
         let pageSize = parseInt(perPageSelect?.value) || 8;
         let cartItems = [];
-
-        // Verify DOM elements
-        console.log('DOM elements initialized:', {
-            cartItemsContainer: !!cartItemsContainer,
-            cartCount: !!cartCount,
-            cartSubtotal: !!cartSubtotal,
-            paginationContainer: !!paginationContainer
-        });
 
         function generateSlug() {
             const nameInput = document.querySelector('input[name="Name"]');
@@ -250,7 +245,9 @@
                 }
                 const data = await response.json();
                 totalProductCard.textContent = `Total Product: ${data.totalProducts}`;
+                totalProductCardSpan.textContent = `${data.totalProducts}`;
                 totalVendorCard.textContent = `Total Vendor: ${data.totalVendors}`;
+                totalVendorCardSpan.textContent = `${data.totalVendors}`;
                 uniqueProductCard.textContent = `Unique Product: ${data.uniqueProducts}`;
             } catch (err) {
                 console.error('Error loading dashboard stats:', err);
@@ -263,7 +260,6 @@
         async function loadProducts(page = 1, search = '') {
             try {
                 const url = `${API_BASE_URL}/api/products?page=${page}&pageSize=${pageSize}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
-                console.log('Fetching products:', url);
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: { 'Accept': 'application/json' }
@@ -283,7 +279,6 @@
 
         async function loadCart() {
             try {
-                console.log('Loading cart for user:', userId);
                 const response = await fetch(`${API_BASE_URL}/api/cart/${userId}`, {
                     method: 'GET',
                     headers: { 'Accept': 'application/json' }
@@ -292,7 +287,6 @@
                     throw new Error(`Failed to fetch cart: ${await response.text()}`);
                 }
                 cartItems = await response.json();
-                console.log('Cart items loaded:', cartItems);
                 renderCartItems(cartItems);
             } catch (err) {
                 console.error('Error loading cart:', err);
@@ -347,15 +341,20 @@
 
             const totalPages = Math.ceil(total / pageSize);
             paginationContainer.innerHTML = `
-            <button class="pagination-btn" data-page="${page - 1}" ${page === 1 ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">←</button>
+            <button class="pagination-btn px-3 py-1.5 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-500 hover:text-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" data-page="${page - 1}" ${page === 1 ? 'disabled' : ''} autocomplete="off">
+            ← Prev
+            </button>
             ${Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map(i => `
-                <button class="pagination-btn" data-page="${i}" class="px-3 py-1 rounded ${i === page ? 'bg-[#2F80ED] text-white' : 'hover:bg-gray-200'}">${i}</button>
+            <button class="pagination-btn px-3 py-1.5 rounded-md border ${i === page ? 'bg-blue-500 text-white border-blue-500' : 'bg-white border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-500 hover:text-blue-600'} transition-colors duration-200" data-page="${i}" autocomplete="off">
+                ${i}
+            </button>
             `).join('')}
-            ${totalPages > 5 ? '<span>...</span>' : ''}
-            <button class="pagination-btn" data-page="${page + 1}" ${page === totalPages ? 'disabled' : ''} class="px-2 py-1 rounded hover:bg-gray-200">Next →</button>
+            ${totalPages > 5 ? '<span class="text-gray-500">...</span>' : ''}
+            <button class="pagination-btn px-3 py-1.5 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-500 hover:text-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" data-page="${page + 1}" ${page === totalPages ? 'disabled' : ''} autocomplete="off">
+            Next →
+            </button>
         `;
 
-            // Attach event listeners
             attachEventListeners();
         }
 
@@ -373,7 +372,6 @@
                 cartItemsContainer.innerHTML = '<p class="text-sm text-[#777777]">Your cart is empty</p>';
                 cartCount.textContent = '0';
                 cartSubtotal.textContent = '0.00';
-                console.log('Cart is empty');
                 return;
             }
 
@@ -407,12 +405,10 @@
 
             cartCount.textContent = totalItems;
             cartSubtotal.textContent = subtotal.toFixed(2);
-            console.log('Cart rendered:', { totalItems, subtotal });
         }
 
         async function addToCart(productId) {
             try {
-                console.log('Adding to cart:', productId);
                 const response = await fetch(`${API_BASE_URL}/api/cart`, {
                     method: 'POST',
                     headers: {
@@ -438,7 +434,6 @@
                     if (cartSidebar) {
                         cartSidebar.classList.remove('translate-x-full');
                         cartSidebar.classList.add('translate-x-0');
-                        console.log('Cart sidebar opened via fallback');
                     } else {
                         console.error('Cart sidebar DOM element not found');
                     }
@@ -451,7 +446,6 @@
 
         async function updateQuantity(productId, newQuantity) {
             try {
-                console.log('Updating quantity:', { productId, newQuantity });
                 const response = await fetch(`${API_BASE_URL}/api/cart/${userId}/${productId}`, {
                     method: 'PUT',
                     headers: {
@@ -472,45 +466,37 @@
         }
 
         function attachEventListeners() {
-            // Handle Add to Cart buttons
             const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
             addToCartButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const productId = parseInt(button.closest('[data-product-id]').dataset.productId);
-                    console.log('Add to cart clicked for product:', productId);
                     addToCart(productId);
                 });
             });
 
-            // Handle decrement buttons
             const decrementButtons = document.querySelectorAll('.decrement-btn');
             decrementButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const productId = parseInt(button.closest('[data-product-id]').dataset.productId);
                     const currentQuantity = parseInt(button.nextElementSibling.textContent);
-                    console.log('Decrement clicked for product:', productId, 'New quantity:', currentQuantity - 1);
                     updateQuantity(productId, currentQuantity - 1);
                 });
             });
 
-            // Handle increment buttons
             const incrementButtons = document.querySelectorAll('.increment-btn');
             incrementButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const productId = parseInt(button.closest('[data-product-id]').dataset.productId);
                     const currentQuantity = parseInt(button.previousElementSibling.textContent);
-                    console.log('Increment clicked for product:', productId, 'New quantity:', currentQuantity + 1);
                     updateQuantity(productId, currentQuantity + 1);
                 });
             });
 
-            // Handle pagination buttons
             const paginationButtons = document.querySelectorAll('.pagination-btn');
             paginationButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const page = parseInt(button.dataset.page);
                     if (!isNaN(page)) {
-                        console.log('Pagination clicked for page:', page);
                         loadProducts(page, searchInput?.value || '');
                     }
                 });
