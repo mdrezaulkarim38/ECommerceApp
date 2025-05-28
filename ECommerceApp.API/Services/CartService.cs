@@ -1,5 +1,6 @@
 using ECommerceApp.API.Data;
 using ECommerceApp.API.Dtos;
+using ECommerceApp.API.Models;
 using ECommerceApp.API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,14 +41,39 @@ public class CartService : ICartService
 
     public async Task<object> GetCartAsync(string userId)
     {
-        var cart = await _context.CartItems
-            .Include(c => c.Product)
-            .Where(c => c.UserId == userId)
-            .ToListAsync();
+        var cartItems = await _context.CartItems
+        .Include(c => c.Product)
+        .Where(c => c.UserId == userId)
+        .ToListAsync();
+
+        var cart = cartItems.Select(c => new
+        {
+            c.Id,
+            c.ProductId,
+            Product = new
+            {
+                c.Product!.Name,
+                c.Product.ImageUrl,
+                OriginalPrice = c.Product.Price,
+                DiscountedPrice = GetDiscountedPrice(c.Product)
+            },
+            c.Quantity
+        });
 
         return cart;
     }
 
+    private decimal? GetDiscountedPrice(Product product)
+    {
+        if (product.DiscountPercent.HasValue &&
+            product.DiscountStartDate <= DateTime.Today &&
+            DateTime.Today <= product.DiscountEndDate)
+        {
+            return product.Price * (1 - product.DiscountPercent.Value / 100);
+        }
+
+        return null;
+    }
     public async Task<bool> RemoveFromCartAsync(string userId, int productId)
     {
         var cartItem = await _context.CartItems

@@ -276,6 +276,7 @@
                     throw new Error(`Failed to fetch cart: ${await response.text()}`);
                 }
                 cartItems = await response.json();
+                console.log(cartItems);
                 renderCartItems(cartItems);
             } catch (err) {
                 console.error('Error loading cart:', err);
