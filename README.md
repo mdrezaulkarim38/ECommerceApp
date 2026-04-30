@@ -1,139 +1,129 @@
-# 🛒 ECommerceApp
+# ECommerceApp
 
-This is a simple full-stack E-Commerce application built using **ASP.NET Core 8**, **Entity Framework Core**, and **SQLite**. It consists of two parts:
+Backend-first rewrite for an AI-powered ecommerce platform.
 
-* **Backend API** (`ECommerceApp.API`)
-* **Frontend Razor Pages App** (`ECommerceApp.Web`)
+Current status:
 
----
+- Backend: ASP.NET Core 10 Web API
+- Database: SQL Server with Windows authentication
+- Frontend: React 19 with Vite
+- AI/recommendation/forecasting: planned for the final phase
 
-## 🗂️ Project Structure
+## Backend Stack
 
-```
-ECommerceApp/
-│
-├── ECommerceApp.API/              → Backend (Web API)
-│   ├── Controllers/
-│   ├── Data/
-│   ├── Dtos/
-│   ├── Interfaces/
-│   ├── Middleware/
-│   ├── Migrations/
-│   ├── Models/
-│   ├── Services/
-│   ├── wwwroot/images/            → Uploaded product images
-│   ├── ecommerce.db               → SQLite Database
-│   └── Program.cs
-│
-├── ECommerceApp.Web/              → Frontend (Razor Pages)
-│   ├── Pages/
-│   │   ├── Shared/_Layout.cshtml  → Layout (Navbar, Sidebar)
-│   │   └── Index.cshtml           → Main page (Product display)
-│   └── wwwroot/images/            → Static logos/images
-```
+- ASP.NET Core 10
+- Entity Framework Core 10
+- SQL Server
+- ASP.NET Core Identity API endpoints
+- Swashbuckle Swagger
 
----
+## Frontend Stack
 
-## ⚙️ Technologies Used
+- React 19
+- Vite
+- Lucide React icons
+- Plain CSS modules in `src/styles.css`
 
-* ASP.NET Core 8
-* Entity Framework Core
-* SQLite 3
-* Razor Pages
-* Tailwind CSS (via CDN)
+## SQL Server
 
----
+The API uses Windows authentication and creates/updates the database through EF Core migrations.
 
-## 🚀 Features
+Connection string:
 
-### 🧩 Frontend (`ECommerceApp.Web`)
-
-* **Product Listing:** 4 products per page in two rows with pagination and dropdown to adjust page size.
-* **Search:** Live search by partial product name — no button click needed.
-* **Add Product Modal:**
-
-  * Includes fields for **Discount Percentage** and **Product Image** (not in the original requirements but necessary for UI).
-  * Includes a **Slug Generator** — auto-generates from the name or manually with the click of a button.
-* **Layout Components:**
-
-  * Navbar
-  * Sidebar for Shopping Cart
-* **Static Vendor/User ID:** Set statically for demo purposes.
-
-### 🔗 Backend (`ECommerceApp.API`)
-
-* **Products Manage**
-* **Cart Information**
-* **Image Upload Support**
-* **Discount Price Calculation**
-* **CORS Configuration** (see below if you use a different port)
-
----
-
-## 🏁 Getting Started
-
-### 📦 Prerequisites
-
-* [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-* [SQLite 3](https://www.sqlite.org/download.html)
-
-### 🛠️ Running the App
-
-1. **Start the API:**
-
-   ```bash
-   cd ECommerceApp.API
-   dotnet run
-   ```
-
-2. **Start the Frontend:**
-
-   Open a new terminal:
-
-   ```bash
-   cd ECommerceApp.Web
-   dotnet run
-   ```
-
-3. **Navigate to:**
-
-   * Frontend: [http://localhost:5026](http://localhost:5026)
-   * Backend API: [http://localhost:5099](http://localhost:5099)
-
----
-
-## 🌐 CORS Configuration
-
-If your frontend runs on a different port than `5026`, update the CORS policy in `ECommerceApp.API/Program.cs`:
-
-```csharp
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowLocalhost5026", policy =>
-    {
-        policy.WithOrigins("http://localhost:<your-new-port>")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
+```json
+"DefaultConnection": "Data Source=DESKTOP-1N9N76K;Initial Catalog=ECommerceAppDb;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Application Name=\"ECommerceApp API\";Command Timeout=0"
 ```
 
----
+Database name:
 
-## 📁 File Uploads
-
-Uploaded product images are saved to:
-
-```
-ECommerceApp.API/wwwroot/images
+```text
+ECommerceAppDb
 ```
 
----
+## Seeded Admin
 
-## 📞 Support
+The development seed creates:
 
-If you face any issues or need help, feel free to contact:
+```text
+Email: admin@ecommerce.local
+Password: Admin@12345
+Role: Admin
+```
 
-**MD Rezaul Karim Shuvo**
-📧 [mdrezaulkarim31295@gmail.com](mailto:mdrezaulkarim31295@gmail.com)
-📞 +8801303316865
+Change this before production.
+
+## Backend Features
+
+- Auth/register/login through `/api/auth`
+- Account/profile endpoints
+- Admin user role management
+- Product catalog with categories, search, filters, sort, pagination
+- Product images under `wwwroot/uploads/products`
+- Inventory and low-stock management
+- Wishlist
+- Cart
+- Checkout and order history
+- Admin order management
+- Reviews and ratings
+- Admin dashboard summary
+- Seed data for categories and sample products
+- JSON console logging for application and HTTP request logs
+
+## Logging
+
+The API writes structured JSON logs to the console. Each request log includes:
+
+```text
+traceId, requestMethod, requestPath, statusCode, elapsedMilliseconds, remoteIpAddress, userId, userName
+```
+
+Sensitive request bodies, passwords, and bearer tokens are not logged.
+
+## Run Backend
+
+```bash
+cd ECommerceApp.API
+dotnet run --urls http://localhost:5099
+```
+
+Swagger:
+
+```text
+http://localhost:5099/swagger
+```
+
+## Useful Endpoints
+
+```text
+GET    /api/categories
+GET    /api/products
+POST   /api/auth/login
+GET    /api/account/me
+GET    /api/cart
+POST   /api/orders/checkout
+GET    /api/admin/dashboard
+```
+
+Most customer endpoints require a bearer token. Admin endpoints require the `Admin` role.
+
+## Run Frontend
+
+Open a second terminal:
+
+```bash
+cd ECommerceApp.Client
+npm install
+npm run dev
+```
+
+Frontend:
+
+```text
+http://localhost:5173
+```
+
+Production build:
+
+```bash
+npm run build
+```
