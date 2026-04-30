@@ -2,11 +2,20 @@ using ECommerceApp.API.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ECommerceApp.API.Data;
 
 public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
 {
+    private static readonly ValueConverter<DateTimeOffset, long> DateTimeOffsetToLongConverter = new(
+        value => value.ToUnixTimeMilliseconds(),
+        value => DateTimeOffset.FromUnixTimeMilliseconds(value));
+
+    private static readonly ValueConverter<DateTimeOffset?, long?> NullableDateTimeOffsetToLongConverter = new(
+        value => value.HasValue ? value.Value.ToUnixTimeMilliseconds() : null,
+        value => value.HasValue ? DateTimeOffset.FromUnixTimeMilliseconds(value.Value) : null);
+
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Category> Categories => Set<Category>();
@@ -108,5 +117,27 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
             entity.Property(r => r.Title).HasMaxLength(120);
             entity.Property(r => r.Comment).HasMaxLength(1200);
         });
+
+        ConfigureSqliteDateTimeOffsets(builder);
+    }
+
+    private static void ConfigureSqliteDateTimeOffsets(ModelBuilder builder)
+    {
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.ClrType == typeof(DateTimeOffset))
+                {
+                    property.SetValueConverter(DateTimeOffsetToLongConverter);
+                    property.SetColumnType("INTEGER");
+                }
+                else if (property.ClrType == typeof(DateTimeOffset?))
+                {
+                    property.SetValueConverter(NullableDateTimeOffsetToLongConverter);
+                    property.SetColumnType("INTEGER");
+                }
+            }
+        }
     }
 }
