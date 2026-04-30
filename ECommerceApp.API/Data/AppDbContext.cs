@@ -39,9 +39,9 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
             entity.Property(p => p.Slug).HasMaxLength(180).IsRequired();
             entity.Property(p => p.Sku).HasMaxLength(64).IsRequired();
             entity.Property(p => p.Brand).HasMaxLength(80);
-            entity.Property(p => p.Price).HasPrecision(18, 2);
-            entity.Property(p => p.CompareAtPrice).HasPrecision(18, 2);
-            entity.Property(p => p.DiscountPercent).HasPrecision(5, 2);
+            entity.Property(p => p.Price).HasConversion<double>();
+            entity.Property(p => p.CompareAtPrice).HasConversion<double?>();
+            entity.Property(p => p.DiscountPercent).HasConversion<double?>();
             entity.HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
@@ -86,20 +86,20 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
             entity.Property(o => o.Status).HasConversion<string>().HasMaxLength(32);
             entity.Property(o => o.PaymentStatus).HasConversion<string>().HasMaxLength(32);
             entity.Property(o => o.PaymentMethod).HasConversion<string>().HasMaxLength(32);
-            entity.Property(o => o.Subtotal).HasPrecision(18, 2);
-            entity.Property(o => o.DiscountTotal).HasPrecision(18, 2);
-            entity.Property(o => o.ShippingTotal).HasPrecision(18, 2);
-            entity.Property(o => o.TaxTotal).HasPrecision(18, 2);
-            entity.Property(o => o.Total).HasPrecision(18, 2);
+            entity.Property(o => o.Subtotal).HasConversion<double>();
+            entity.Property(o => o.DiscountTotal).HasConversion<double>();
+            entity.Property(o => o.ShippingTotal).HasConversion<double>();
+            entity.Property(o => o.TaxTotal).HasConversion<double>();
+            entity.Property(o => o.Total).HasConversion<double>();
         });
 
         builder.Entity<OrderItem>(entity =>
         {
             entity.Property(i => i.ProductName).HasMaxLength(160).IsRequired();
             entity.Property(i => i.Sku).HasMaxLength(64).IsRequired();
-            entity.Property(i => i.UnitPrice).HasPrecision(18, 2);
-            entity.Property(i => i.DiscountAmount).HasPrecision(18, 2);
-            entity.Property(i => i.LineTotal).HasPrecision(18, 2);
+            entity.Property(i => i.UnitPrice).HasConversion<double>();
+            entity.Property(i => i.DiscountAmount).HasConversion<double>();
+            entity.Property(i => i.LineTotal).HasConversion<double>();
         });
 
         builder.Entity<Review>(entity =>

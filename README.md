@@ -5,7 +5,7 @@ Backend-first rewrite for an AI-powered ecommerce platform.
 Current status:
 
 - Backend: ASP.NET Core 10 Web API
-- Database: SQL Server with Windows authentication
+- Database: SQLite
 - Frontend: React 19 with Vite
 - AI/recommendation/forecasting: planned for the final phase
 
@@ -13,7 +13,7 @@ Current status:
 
 - ASP.NET Core 10
 - Entity Framework Core 10
-- SQL Server
+- SQLite
 - ASP.NET Core Identity API endpoints
 - Swashbuckle Swagger
 
@@ -24,21 +24,23 @@ Current status:
 - Lucide React icons
 - Plain CSS modules in `src/styles.css`
 
-## SQL Server
+## SQLite
 
-The API uses Windows authentication and creates/updates the database through EF Core migrations.
+The API uses a local SQLite database and creates/updates it through EF Core migrations. No SQL Server setup is required.
 
 Connection string:
 
 ```json
-"DefaultConnection": "Data Source=DESKTOP-1N9N76K;Initial Catalog=ECommerceAppDb;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Application Name=\"ECommerceApp API\";Command Timeout=0"
+"DefaultConnection": "Data Source=ecommerce.db"
 ```
 
-Database name:
+Database file:
 
 ```text
-ECommerceAppDb
+ECommerceApp.API/ecommerce.db
 ```
+
+The previous legacy SQLite file was backed up as `ECommerceApp.API/ecommerce.legacy.20260430220954.db`.
 
 ## Seeded Admin
 
