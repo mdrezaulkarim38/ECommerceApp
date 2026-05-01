@@ -1,0 +1,2890 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R 21 0 R 23 0 R 25 0 R 27 0 R 29 0 R] /Count 12 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+6 0 obj
+<< /Length 3533 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 1) Tj
+ET
+BT
+/F2 20 Tf
+1 0 0 1 48 787.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 747.89 Tm
+(Project: AI-Powered Smart E-commerce Platform) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 734.89 Tm
+(Frontend: React.js customer, admin, and guest experience) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 721.89 Tm
+(Backend target: ASP.NET Core Web API, SQL Server, Entity Framework Core) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 708.89 Tm
+(Recommended base URL: /api/v1) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 687.89 Tm
+(This document lists the backend endpoints needed to replace the current localStorage mock workflow) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 674.89 Tm
+(with a real ASP.NET Core and SQL Server API. Blog/news endpoints are intentionally not included) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 661.89 Tm
+(because that feature was removed from the frontend.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 634.89 Tm
+(1. Architecture Overview) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 603.89 Tm
+(React Frontend) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 592.89 Tm
+(- Guest shop) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 581.89 Tm
+(- Customer account, cart, checkout, recommendations) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 570.89 Tm
+(- Admin dashboard) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 559.89 Tm
+(ASP.NET Core Web API) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 548.89 Tm
+(- Controllers) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 537.89 Tm
+(- DTO validation) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 526.89 Tm
+(- JWT authentication and role authorization) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 515.89 Tm
+(- Application services) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 504.89 Tm
+(Application Layer) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 493.89 Tm
+(- AuthService) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 482.89 Tm
+(- ProductService) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 471.89 Tm
+(- CartService) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 460.89 Tm
+(- OrderService) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 449.89 Tm
+(- RecommendationService) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 438.89 Tm
+(- AnalyticsService) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 427.89 Tm
+(- ForecastingService) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 416.89 Tm
+(- AdminService) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 405.89 Tm
+(Infrastructure Layer) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 394.89 Tm
+(- Entity Framework Core) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 383.89 Tm
+(- SQL Server) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 372.89 Tm
+(- Optional cache for catalog, recommendations, and dashboard KPIs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 361.89 Tm
+(- Optional background jobs for forecast/recommendation refresh) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 331.89 Tm
+(2. API Conventions) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 300.89 Tm
+(Authentication) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 277.89 Tm
+(Use JWT bearer authentication.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 256.89 Tm
+(Roles:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 243.89 Tm
+(  - Guest: no token) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 230.89 Tm
+(  - User: registered customer) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 217.89 Tm
+(  - Admin: admin user, initially seeded as admin@shop.com) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 191.89 Tm
+(Standard Response Envelope) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 163.89 Tm
+({) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 152.89 Tm
+("success": true,) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 141.89 Tm
+("message": "Operation completed",) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 130.89 Tm
+("data": {},) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 119.89 Tm
+("errors": []) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 108.89 Tm
+(}) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 79.89 Tm
+(Pagination Query Convention) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 3447 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 2) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 787.89 Tm
+(Use this for list endpoints:) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 761.89 Tm
+(?page=1&pageSize=12&search=headphone&sortBy=price&sortOrder=asc) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 737.89 Tm
+(Response metadata:) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 711.89 Tm
+({) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 700.89 Tm
+("items": [],) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 689.89 Tm
+("page": 1,) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 678.89 Tm
+("pageSize": 12,) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 667.89 Tm
+("totalItems": 100,) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 656.89 Tm
+("totalPages": 9) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 645.89 Tm
+(}) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 616.89 Tm
+(Common HTTP Status Codes) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 593.89 Tm
+(  - 200 OK: read/update successful) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 580.89 Tm
+(  - 201 Created: create successful) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 567.89 Tm
+(  - 204 No Content: delete successful) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 554.89 Tm
+(  - 400 Bad Request: validation error) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 541.89 Tm
+(  - 401 Unauthorized: missing/invalid token) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 528.89 Tm
+(  - 403 Forbidden: wrong role) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 515.89 Tm
+(  - 404 Not Found: resource missing) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 502.89 Tm
+(  - 409 Conflict: duplicate email, invalid stock, duplicate review) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 489.89 Tm
+(  - 500 Internal Server Error: unexpected server issue) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 462.89 Tm
+(3. Authentication Endpoints) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 431.89 Tm
+(Public) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 408.89 Tm
+(  - POST /api/v1/auth/register) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 397.39 Tm
+(  - Registers a regular customer.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 384.39 Tm
+(  - Body: name, email, password, confirmPassword, address, phoneNumber.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 363.39 Tm
+(  - POST /api/v1/auth/login) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 351.89 Tm
+(  - Logs in customer or admin.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 338.89 Tm
+(  - Body: email, password, rememberMe.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 325.89 Tm
+(  - Returns: accessToken, refreshToken, user profile, role.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 304.89 Tm
+(  - POST /api/v1/auth/refresh-token) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 293.39 Tm
+(  - Issues a new access token.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 280.39 Tm
+(  - Body: refreshToken.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 259.39 Tm
+(  - POST /api/v1/auth/forgot-password) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 247.89 Tm
+(  - Starts mock or real reset flow.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 234.89 Tm
+(  - Body: email.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 213.89 Tm
+(  - POST /api/v1/auth/reset-password) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 202.39 Tm
+(  - Completes reset flow.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 189.39 Tm
+(  - Body: email, token, newPassword.) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 163.39 Tm
+(Authenticated) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 140.39 Tm
+(  - GET /api/v1/auth/me) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 128.89 Tm
+(  - Returns current logged-in user.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 107.89 Tm
+(  - POST /api/v1/auth/logout) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 96.39 Tm
+(  - Invalidates refresh token.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 75.39 Tm
+(  - PUT /api/v1/auth/password) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 63.89 Tm
+(  - Changes password.) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 3272 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 3) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 787.89 Tm
+(  - Body: currentPassword, newPassword.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 760.89 Tm
+(4. Product Catalog Endpoints) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 729.89 Tm
+(Public Catalog) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 706.89 Tm
+(  - GET /api/v1/products) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 695.39 Tm
+(  - Used by home page product grid.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 682.39 Tm
+(  - Query: search, categoryId, brandId, minPrice, maxPrice, minRating, sortBy, sortOrder, page,) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 669.39 Tm
+(  pageSize.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 648.39 Tm
+(  - GET /api/v1/products/autocomplete) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 636.89 Tm
+(  - Used by search suggestions.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 623.89 Tm
+(  - Query: query, limit.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 602.89 Tm
+(  - GET /api/v1/products/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 591.39 Tm
+(  - Used by product detail page.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 570.39 Tm
+(  - GET /api/v1/products/{productId}/gallery) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 558.89 Tm
+(  - Product image gallery.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 537.89 Tm
+(  - GET /api/v1/products/{productId}/rating-summary) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 526.39 Tm
+(  - Average rating and star breakdown.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 505.39 Tm
+(  - GET /api/v1/products/compare) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 493.89 Tm
+(  - Used by compare page.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 480.89 Tm
+(  - Query: ids=p-1,p-2,p-3,p-4.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 459.89 Tm
+(  - GET /api/v1/categories) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 448.39 Tm
+(  - Category filter list.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 427.39 Tm
+(  - GET /api/v1/brands) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 415.89 Tm
+(  - Brand/seller listing page.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 394.89 Tm
+(  - GET /api/v1/brands/{brandId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 383.39 Tm
+(  - Brand detail page.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 362.39 Tm
+(  - GET /api/v1/brands/{brandId}/products) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 350.89 Tm
+(  - Products under a brand.) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 324.89 Tm
+(Authenticated Customer) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 301.89 Tm
+(  - POST /api/v1/brands/{brandId}/follow) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 290.39 Tm
+(  - Follow a brand.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 269.39 Tm
+(  - DELETE /api/v1/brands/{brandId}/follow) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 257.89 Tm
+(  - Unfollow a brand.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 230.89 Tm
+(5. Product Reviews Endpoints) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 199.89 Tm
+(Public) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 176.89 Tm
+(  - GET /api/v1/products/{productId}/reviews) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 165.39 Tm
+(  - Product review list.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 152.39 Tm
+(  - Query: page, pageSize, sortBy.) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 126.39 Tm
+(Authenticated Customer) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 103.39 Tm
+(  - POST /api/v1/products/{productId}/reviews) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 91.89 Tm
+(  - Creates review.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 78.89 Tm
+(  - Body: rating, comment.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 57.89 Tm
+(  - PUT /api/v1/reviews/{reviewId}) Tj
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 3427 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 4) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 787.89 Tm
+(  - Updates customer review.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 766.89 Tm
+(  - DELETE /api/v1/reviews/{reviewId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 755.39 Tm
+(  - Deletes customer review.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 728.39 Tm
+(6. Cart Endpoints) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 702.39 Tm
+(All cart endpoints require User role.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 681.39 Tm
+(  - GET /api/v1/cart) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 669.89 Tm
+(  - Current user's cart.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 648.89 Tm
+(  - POST /api/v1/cart/items) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 637.39 Tm
+(  - Adds item to cart.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 624.39 Tm
+(  - Body: productId, quantity.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 603.39 Tm
+(  - PUT /api/v1/cart/items/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 591.89 Tm
+(  - Updates item quantity.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 578.89 Tm
+(  - Body: quantity.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 557.89 Tm
+(  - DELETE /api/v1/cart/items/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 546.39 Tm
+(  - Removes item from cart.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 525.39 Tm
+(  - DELETE /api/v1/cart) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 513.89 Tm
+(  - Clears cart.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 492.89 Tm
+(  - POST /api/v1/cart/items/{productId}/save-for-later) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 481.39 Tm
+(  - Moves cart item to wishlist.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 454.39 Tm
+(7. Wishlist Endpoints) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 428.39 Tm
+(All wishlist endpoints require User role.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 407.39 Tm
+(  - GET /api/v1/wishlist) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 395.89 Tm
+(  - Current user's wishlist.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 374.89 Tm
+(  - POST /api/v1/wishlist/items/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 363.39 Tm
+(  - Adds product to wishlist.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 342.39 Tm
+(  - DELETE /api/v1/wishlist/items/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 330.89 Tm
+(  - Removes product from wishlist.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 309.89 Tm
+(  - POST /api/v1/wishlist/items/{productId}/move-to-cart) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 298.39 Tm
+(  - Moves wishlist item to cart.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 285.39 Tm
+(  - Body: quantity.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 258.39 Tm
+(8. Checkout and Order Endpoints) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 232.39 Tm
+(All checkout/order customer endpoints require User role.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 211.39 Tm
+(  - POST /api/v1/checkout/quote) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 199.89 Tm
+(  - Calculates subtotal, shipping, tax, discount, and total.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 186.89 Tm
+(  - Body: cartItems, addressId or address, couponCode.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 165.89 Tm
+(  - POST /api/v1/coupons/validate) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 154.39 Tm
+(  - Validates coupon code.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 141.39 Tm
+(  - Body: couponCode, subtotal.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 120.39 Tm
+(  - POST /api/v1/orders) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 108.89 Tm
+(  - Places order and clears cart.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 95.89 Tm
+(  - Body: addressId or shippingAddress, paymentMethod, couponCode.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 74.89 Tm
+(  - GET /api/v1/orders/my) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 63.39 Tm
+(  - Current user's order history.) Tj
+ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 3435 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 5) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 787.89 Tm
+(  - Query: status, page, pageSize.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 766.89 Tm
+(  - GET /api/v1/orders/{orderId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 755.39 Tm
+(  - Current user's order details.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 734.39 Tm
+(  - GET /api/v1/orders/{orderId}/tracking) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 722.89 Tm
+(  - Order tracking timeline.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 701.89 Tm
+(  - POST /api/v1/orders/{orderId}/cancel) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 690.39 Tm
+(  - Cancels eligible order.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 669.39 Tm
+(  - POST /api/v1/orders/{orderId}/reorder) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 657.89 Tm
+(  - Adds previous order items back to cart.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 630.89 Tm
+(9. User Profile and Address Endpoints) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 604.89 Tm
+(All endpoints require User role, except admin user management endpoints listed later.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 583.89 Tm
+(  - GET /api/v1/users/me) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 572.39 Tm
+(  - Profile overview.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 551.39 Tm
+(  - PUT /api/v1/users/me) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 539.89 Tm
+(  - Updates name, email, phone.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 518.89 Tm
+(  - GET /api/v1/users/me/stats) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 507.39 Tm
+(  - Account stats for profile overview.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 486.39 Tm
+(  - GET /api/v1/users/me/addresses) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 474.89 Tm
+(  - Address book.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 453.89 Tm
+(  - POST /api/v1/users/me/addresses) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 442.39 Tm
+(  - Adds address.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 421.39 Tm
+(  - PUT /api/v1/users/me/addresses/{addressId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 409.89 Tm
+(  - Updates address.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 388.89 Tm
+(  - DELETE /api/v1/users/me/addresses/{addressId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 377.39 Tm
+(  - Deletes address.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 350.39 Tm
+(10. Recently Viewed and User Event Endpoints) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 324.39 Tm
+(These endpoints support personalization and recommendation signals.) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 298.39 Tm
+(Guest or User) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 275.39 Tm
+(  - POST /api/v1/events/product-view) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 263.89 Tm
+(  - Stores product view event.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 250.89 Tm
+(  - Body: productId, anonymousSessionId optional.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 229.89 Tm
+(  - POST /api/v1/events/search) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 218.39 Tm
+(  - Stores search event.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 205.39 Tm
+(  - Body: query, filters.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 184.39 Tm
+(  - POST /api/v1/events/recommendation-click) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 172.89 Tm
+(  - Stores recommendation click.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 159.89 Tm
+(  - Body: productId, recommendationId, placement.) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 133.89 Tm
+(Authenticated Customer) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 110.89 Tm
+(  - GET /api/v1/recently-viewed) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 99.39 Tm
+(  - Current user's recent product views.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 78.39 Tm
+(  - POST /api/v1/recently-viewed/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 66.89 Tm
+(  - Adds product to recently viewed list.) Tj
+ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 3244 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 6) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 779.89 Tm
+(  - DELETE /api/v1/recently-viewed) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 768.39 Tm
+(  - Clears recently viewed list.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 741.39 Tm
+(11. AI Recommendation Endpoints) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 715.39 Tm
+(All recommendation hub endpoints require User role.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 694.39 Tm
+(  - GET /api/v1/recommendations) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 682.89 Tm
+(  - Returns recommendation hub data.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 669.89 Tm
+(  - Sections: justForYou, trendingNow, seasonalPicks, completeTheLook, recentlyViewed.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 648.89 Tm
+(  - POST /api/v1/recommendations/refresh) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 637.39 Tm
+(  - Refreshes recommendation results.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 616.39 Tm
+(  - GET /api/v1/products/{productId}/recommendations) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 604.89 Tm
+(  - Related products for product detail page.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 583.89 Tm
+(  - GET /api/v1/recommendations/explanations) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 572.39 Tm
+(  - Explanation badge text.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 559.39 Tm
+(  - Query: productId, sourceProductId optional.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 538.39 Tm
+(  - GET /api/v1/trending) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 526.89 Tm
+(  - Trending products.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 513.89 Tm
+(  - Query: categoryId optional, limit.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 486.89 Tm
+(12. Deals and Coupon Endpoints) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 455.89 Tm
+(Public) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 432.89 Tm
+(  - GET /api/v1/deals) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 421.39 Tm
+(  - Deals page.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 408.39 Tm
+(  - Query: type=today|lightning|clearance, categoryId, page, pageSize.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 387.39 Tm
+(  - GET /api/v1/deals/flash-sale) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 375.89 Tm
+(  - Flash sale countdown and active deal metadata.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 354.89 Tm
+(  - POST /api/v1/deals/subscribe) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 343.39 Tm
+(  - Email alert signup.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 330.39 Tm
+(  - Body: email.) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 304.39 Tm
+(Admin) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 281.39 Tm
+(  - POST /api/v1/admin/deals) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 269.89 Tm
+(  - Creates deal.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 248.89 Tm
+(  - PUT /api/v1/admin/deals/{dealId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 237.39 Tm
+(  - Updates deal.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 216.39 Tm
+(  - DELETE /api/v1/admin/deals/{dealId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 204.89 Tm
+(  - Deletes deal.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 177.89 Tm
+(13. Support Center Endpoints) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 146.89 Tm
+(Public) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 123.89 Tm
+(  - GET /api/v1/support/faqs) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 112.39 Tm
+(  - FAQ accordion data.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 91.39 Tm
+(  - GET /api/v1/support/policies/shipping) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 79.89 Tm
+(  - Shipping information.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 58.89 Tm
+(  - GET /api/v1/support/policies/returns) Tj
+ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 3373 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 7) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 787.89 Tm
+(  - Returns/refunds policy.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 766.89 Tm
+(  - POST /api/v1/support/tickets) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 755.39 Tm
+(  - Contact form submission.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 742.39 Tm
+(  - Body: name, email, orderId optional, message.) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 716.39 Tm
+(Authenticated Customer) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 693.39 Tm
+(  - GET /api/v1/support/tickets/my) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 681.89 Tm
+(  - Customer's support requests.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 660.89 Tm
+(  - POST /api/v1/support/chat/messages) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 649.39 Tm
+(  - Optional live chat placeholder.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 622.39 Tm
+(14. Admin Product Management Endpoints) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 596.39 Tm
+(All admin endpoints require Admin role.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 575.39 Tm
+(  - GET /api/v1/admin/products) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 563.89 Tm
+(  - Admin product table.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 550.89 Tm
+(  - Query: search, categoryId, status, page, pageSize.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 529.89 Tm
+(  - POST /api/v1/admin/products) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 518.39 Tm
+(  - Adds product.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 497.39 Tm
+(  - PUT /api/v1/admin/products/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 485.89 Tm
+(  - Edits product.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 464.89 Tm
+(  - PATCH /api/v1/admin/products/{productId}/stock) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 453.39 Tm
+(  - Updates stock.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 432.39 Tm
+(  - PATCH /api/v1/admin/products/{productId}/status) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 420.89 Tm
+(  - Activates/deactivates product.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 399.89 Tm
+(  - DELETE /api/v1/admin/products/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 388.39 Tm
+(  - Deletes product.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 367.39 Tm
+(  - POST /api/v1/admin/products/import) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 355.89 Tm
+(  - Bulk import.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 334.89 Tm
+(  - GET /api/v1/admin/products/export) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 323.39 Tm
+(  - Bulk export CSV/Excel.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 296.39 Tm
+(15. Admin Order Management Endpoints) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 270.39 Tm
+(  - GET /api/v1/admin/orders) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 258.89 Tm
+(  - Admin order table.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 245.89 Tm
+(  - Query: status, paymentMethod, fromDate, toDate, search, page, pageSize.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 224.89 Tm
+(  - GET /api/v1/admin/orders/{orderId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 213.39 Tm
+(  - Admin order details.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 192.39 Tm
+(  - PATCH /api/v1/admin/orders/{orderId}/status) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 180.89 Tm
+(  - Updates order status.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 167.89 Tm
+(  - Body: status.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 146.89 Tm
+(  - PATCH /api/v1/admin/orders/{orderId}/tracking) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 135.39 Tm
+(  - Updates tracking note or current location.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 108.39 Tm
+(16. Admin User Management Endpoints) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 82.39 Tm
+(  - GET /api/v1/admin/users) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 70.89 Tm
+(  - User list.) Tj
+ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 18 0 R >>
+endobj
+20 0 obj
+<< /Length 3690 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 8) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 787.89 Tm
+(  - Query: search, role, blocked, page, pageSize.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 766.89 Tm
+(  - GET /api/v1/admin/users/{userId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 755.39 Tm
+(  - User details.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 734.39 Tm
+(  - PATCH /api/v1/admin/users/{userId}/block) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 722.89 Tm
+(  - Blocks user.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 701.89 Tm
+(  - PATCH /api/v1/admin/users/{userId}/unblock) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 690.39 Tm
+(  - Unblocks user.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 669.39 Tm
+(  - PATCH /api/v1/admin/users/{userId}/role) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 657.89 Tm
+(  - Promotes or demotes user.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 644.89 Tm
+(  - Body: role.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 623.89 Tm
+(  - DELETE /api/v1/admin/users/{userId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 612.39 Tm
+(  - Deletes user account.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 585.39 Tm
+(17. Admin Dashboard, Analytics, and Forecasting Endpoints) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 559.39 Tm
+(  - GET /api/v1/admin/dashboard/kpis) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 547.89 Tm
+(  - Total revenue, total orders, total users, low stock count.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 526.89 Tm
+(  - GET /api/v1/admin/dashboard/recent-orders) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 515.39 Tm
+(  - Recent orders widget.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 494.39 Tm
+(  - GET /api/v1/admin/dashboard/top-products) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 482.89 Tm
+(  - Top selling products table.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 461.89 Tm
+(  - GET /api/v1/admin/dashboard/low-stock) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 450.39 Tm
+(  - Low stock alerts.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 429.39 Tm
+(  - GET /api/v1/admin/analytics/sales) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 417.89 Tm
+(  - Sales chart.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 404.89 Tm
+(  - Query: range=7d|30d|90d, groupBy=day|week|month.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 383.89 Tm
+(  - GET /api/v1/admin/forecasting/sales) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 372.39 Tm
+(  - Sales forecast with confidence intervals.) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 359.39 Tm
+(  - Query: months=3.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 338.39 Tm
+(  - GET /api/v1/admin/forecasting/demand-by-category) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 326.89 Tm
+(  - Demand forecast bar chart.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 305.89 Tm
+(  - GET /api/v1/admin/analytics/seasonal-trends) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 294.39 Tm
+(  - Seasonal trend analysis.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 273.39 Tm
+(  - GET /api/v1/admin/ai/model-metrics) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 261.89 Tm
+(  - Recommendation accuracy, CTR, conversion rate, forecast error, MAPE.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 240.89 Tm
+(  - POST /api/v1/admin/ai/retrain) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 229.39 Tm
+(  - Starts AI model retraining job.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 208.39 Tm
+(  - GET /api/v1/admin/ai/retrain/jobs/{jobId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 196.89 Tm
+(  - Retraining job status.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 169.89 Tm
+(18. Admin Settings, Backup, and Restore Endpoints) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 143.89 Tm
+(  - GET /api/v1/admin/settings/store) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 132.39 Tm
+(  - Store name, email, currency, tax rate.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 111.39 Tm
+(  - PUT /api/v1/admin/settings/store) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 99.89 Tm
+(  - Updates store settings.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 78.89 Tm
+(  - GET /api/v1/admin/settings/ai) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 67.39 Tm
+(  - Recommendation and forecasting toggles, retrain schedule.) Tj
+ET
+endstream
+endobj
+21 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 20 0 R >>
+endobj
+22 0 obj
+<< /Length 3196 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 9) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 787.89 Tm
+(  - PUT /api/v1/admin/settings/ai) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 776.39 Tm
+(  - Updates AI settings.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 755.39 Tm
+(  - POST /api/v1/admin/backup) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 743.89 Tm
+(  - Creates backup.) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 722.89 Tm
+(  - POST /api/v1/admin/restore) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 711.39 Tm
+(  - Restores backup.) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 684.39 Tm
+(19. Frontend Page to API Mapping) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 653.39 Tm
+(Public Guest Pages) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 630.39 Tm
+(  - Home page:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 617.39 Tm
+(  - GET /products) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 604.39 Tm
+(  - GET /products/autocomplete) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 591.39 Tm
+(  - GET /categories) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 578.39 Tm
+(  - POST /events/product-view) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 557.39 Tm
+(  - Product detail:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 544.39 Tm
+(  - GET /products/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 531.39 Tm
+(  - GET /products/{productId}/reviews) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 518.39 Tm
+(  - GET /products/{productId}/rating-summary) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 505.39 Tm
+(  - GET /products/{productId}/recommendations) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 484.39 Tm
+(  - Deals:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 471.39 Tm
+(  - GET /deals) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 458.39 Tm
+(  - GET /deals/flash-sale) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 445.39 Tm
+(  - POST /deals/subscribe) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 424.39 Tm
+(  - Brands:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 411.39 Tm
+(  - GET /brands) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 398.39 Tm
+(  - GET /brands/{brandId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 385.39 Tm
+(  - GET /brands/{brandId}/products) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 364.39 Tm
+(  - Compare:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 351.39 Tm
+(  - GET /products/compare) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 330.39 Tm
+(  - Support:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 317.39 Tm
+(  - GET /support/faqs) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 304.39 Tm
+(  - POST /support/tickets) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 278.39 Tm
+(Customer Pages) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 255.39 Tm
+(  - Cart:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 242.39 Tm
+(  - GET /cart) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 229.39 Tm
+(  - POST /cart/items) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 216.39 Tm
+(  - PUT /cart/items/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 203.39 Tm
+(  - DELETE /cart/items/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 190.39 Tm
+(  - POST /cart/items/{productId}/save-for-later) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 169.39 Tm
+(  - Checkout:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 156.39 Tm
+(  - POST /checkout/quote) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 143.39 Tm
+(  - POST /coupons/validate) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 130.39 Tm
+(  - POST /orders) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 109.39 Tm
+(  - Profile:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 96.39 Tm
+(  - GET /users/me) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 83.39 Tm
+(  - PUT /users/me) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 70.39 Tm
+(  - GET /orders/my) Tj
+ET
+endstream
+endobj
+23 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 22 0 R >>
+endobj
+24 0 obj
+<< /Length 3488 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 10) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 787.89 Tm
+(  - GET /wishlist) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 774.89 Tm
+(  - GET /users/me/addresses) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 753.89 Tm
+(  - Recommendations:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 740.89 Tm
+(  - GET /recommendations) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 727.89 Tm
+(  - POST /recommendations/refresh) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 706.89 Tm
+(  - Order tracking:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 693.89 Tm
+(  - GET /orders/{orderId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 680.89 Tm
+(  - GET /orders/{orderId}/tracking) Tj
+ET
+BT
+/F2 11.5 Tf
+1 0 0 1 48 654.89 Tm
+(Admin Pages) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 631.89 Tm
+(  - Admin dashboard:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 618.89 Tm
+(  - GET /admin/dashboard/kpis) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 605.89 Tm
+(  - GET /admin/analytics/sales) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 592.89 Tm
+(  - GET /admin/dashboard/top-products) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 579.89 Tm
+(  - GET /admin/dashboard/recent-orders) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 566.89 Tm
+(  - GET /admin/dashboard/low-stock) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 545.89 Tm
+(  - Products tab:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 532.89 Tm
+(  - GET /admin/products) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 519.89 Tm
+(  - POST /admin/products) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 506.89 Tm
+(  - PUT /admin/products/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 493.89 Tm
+(  - DELETE /admin/products/{productId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 472.89 Tm
+(  - Orders tab:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 459.89 Tm
+(  - GET /admin/orders) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 446.89 Tm
+(  - GET /admin/orders/{orderId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 433.89 Tm
+(  - PATCH /admin/orders/{orderId}/status) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 412.89 Tm
+(  - Users tab:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 399.89 Tm
+(  - GET /admin/users) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 386.89 Tm
+(  - PATCH /admin/users/{userId}/block) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 373.89 Tm
+(  - PATCH /admin/users/{userId}/unblock) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 360.89 Tm
+(  - PATCH /admin/users/{userId}/role) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 347.89 Tm
+(  - DELETE /admin/users/{userId}) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 326.89 Tm
+(  - Analytics tab:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 313.89 Tm
+(  - GET /admin/forecasting/sales) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 300.89 Tm
+(  - GET /admin/forecasting/demand-by-category) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 287.89 Tm
+(  - GET /admin/analytics/seasonal-trends) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 274.89 Tm
+(  - GET /admin/ai/model-metrics) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 253.89 Tm
+(  - Settings tab:) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 240.89 Tm
+(  - GET /admin/settings/store) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 227.89 Tm
+(  - PUT /admin/settings/store) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 214.89 Tm
+(  - GET /admin/settings/ai) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 201.89 Tm
+(  - PUT /admin/settings/ai) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 188.89 Tm
+(  - POST /admin/backup) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 175.89 Tm
+(  - POST /admin/restore) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 148.89 Tm
+(20. Recommended SQL Server Entities) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 122.89 Tm
+(  - Users) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 109.89 Tm
+(  - Roles) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 96.89 Tm
+(  - UserRefreshTokens) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 83.89 Tm
+(  - Addresses) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 70.89 Tm
+(  - Products) Tj
+ET
+endstream
+endobj
+25 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 24 0 R >>
+endobj
+26 0 obj
+<< /Length 3680 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 11) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 787.89 Tm
+(  - ProductImages) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 774.89 Tm
+(  - Categories) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 761.89 Tm
+(  - Brands) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 748.89 Tm
+(  - BrandFollowers) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 735.89 Tm
+(  - Reviews) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 722.89 Tm
+(  - Carts) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 709.89 Tm
+(  - CartItems) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 696.89 Tm
+(  - Wishlists) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 683.89 Tm
+(  - WishlistItems) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 670.89 Tm
+(  - Orders) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 657.89 Tm
+(  - OrderItems) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 644.89 Tm
+(  - OrderStatusHistory) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 631.89 Tm
+(  - Coupons) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 618.89 Tm
+(  - Deals) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 605.89 Tm
+(  - DealSubscriptions) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 592.89 Tm
+(  - ProductViewEvents) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 579.89 Tm
+(  - SearchEvents) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 566.89 Tm
+(  - RecommendationEvents) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 553.89 Tm
+(  - RecommendationResults) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 540.89 Tm
+(  - SupportTickets) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 527.89 Tm
+(  - StoreSettings) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 514.89 Tm
+(  - AiSettings) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 501.89 Tm
+(  - AiModelMetrics) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 488.89 Tm
+(  - ForecastResults) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 475.89 Tm
+(  - Backups) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 448.89 Tm
+(21. Recommended ASP.NET Core Folder Structure) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 417.89 Tm
+(SmartShop.Api) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 406.89 Tm
+(Controllers) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 395.89 Tm
+(AuthController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 384.89 Tm
+(ProductsController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 373.89 Tm
+(CategoriesController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 362.89 Tm
+(BrandsController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 351.89 Tm
+(ReviewsController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 340.89 Tm
+(CartController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 329.89 Tm
+(WishlistController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 318.89 Tm
+(CheckoutController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 307.89 Tm
+(OrdersController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 296.89 Tm
+(RecommendationsController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 285.89 Tm
+(DealsController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 274.89 Tm
+(SupportController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 263.89 Tm
+(Admin) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 252.89 Tm
+(AdminProductsController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 241.89 Tm
+(AdminOrdersController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 230.89 Tm
+(AdminUsersController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 219.89 Tm
+(AdminDashboardController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 208.89 Tm
+(AdminAnalyticsController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 197.89 Tm
+(AdminSettingsController.cs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 186.89 Tm
+(Application) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 175.89 Tm
+(DTOs) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 164.89 Tm
+(Interfaces) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 153.89 Tm
+(Services) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 142.89 Tm
+(Domain) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 131.89 Tm
+(Entities) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 120.89 Tm
+(Enums) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 109.89 Tm
+(Infrastructure) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 98.89 Tm
+(Data) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 87.89 Tm
+(Repositories) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 76.89 Tm
+(Identity) Tj
+ET
+BT
+/F3 8.5 Tf
+1 0 0 1 48 65.89 Tm
+(BackgroundJobs) Tj
+ET
+endstream
+endobj
+27 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 26 0 R >>
+endobj
+28 0 obj
+<< /Length 2250 >>
+stream
+BT
+/F2 9 Tf
+1 0 0 1 48 813.89 Tm
+(SmartShop AI API Endpoint Architecture) Tj
+/F1 8 Tf
+1 0 0 1 499.28 28 Tm
+(Page 12) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 773.89 Tm
+(22. Suggested Build Priority) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 747.89 Tm
+(1. Auth and users) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 734.89 Tm
+(2. Products, categories, brands, reviews) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 721.89 Tm
+(3. Cart, wishlist, checkout, orders) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 708.89 Tm
+(4. Admin products, orders, users) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 695.89 Tm
+(5. Dashboard KPIs and analytics) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 682.89 Tm
+(6. Recommendations and event tracking) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 669.89 Tm
+(7. Forecasting and AI model metrics) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 656.89 Tm
+(8. Support tickets, deals, backup/restore) Tj
+ET
+BT
+/F2 14 Tf
+1 0 0 1 48 629.89 Tm
+(23. Minimal First Backend Milestone) Tj
+ET
+BT
+/F1 9.5 Tf
+1 0 0 1 48 603.89 Tm
+(If you want the frontend connected quickly, build these first:) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 582.89 Tm
+(  - POST /auth/login) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 571.39 Tm
+(  - POST /auth/register) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 559.89 Tm
+(  - GET /auth/me) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 548.39 Tm
+(  - GET /products) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 536.89 Tm
+(  - GET /products/{productId}) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 525.39 Tm
+(  - GET /categories) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 513.89 Tm
+(  - GET /brands) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 502.39 Tm
+(  - GET /cart) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 490.89 Tm
+(  - POST /cart/items) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 479.39 Tm
+(  - PUT /cart/items/{productId}) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 467.89 Tm
+(  - DELETE /cart/items/{productId}) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 456.39 Tm
+(  - GET /wishlist) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 444.89 Tm
+(  - POST /wishlist/items/{productId}) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 433.39 Tm
+(  - POST /orders) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 421.89 Tm
+(  - GET /orders/my) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 410.39 Tm
+(  - GET /admin/dashboard/kpis) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 398.89 Tm
+(  - GET /admin/products) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 387.39 Tm
+(  - GET /admin/orders) Tj
+ET
+BT
+/F3 8.6 Tf
+1 0 0 1 48 375.89 Tm
+(  - GET /admin/users) Tj
+ET
+endstream
+endobj
+29 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 28 0 R >>
+endobj
+xref
+0 30
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000192 00000 n 
+0000000262 00000 n 
+0000000337 00000 n 
+0000000405 00000 n 
+0000003990 00000 n 
+0000004142 00000 n 
+0000007641 00000 n 
+0000007793 00000 n 
+0000011118 00000 n 
+0000011272 00000 n 
+0000014752 00000 n 
+0000014906 00000 n 
+0000018394 00000 n 
+0000018548 00000 n 
+0000021845 00000 n 
+0000021999 00000 n 
+0000025425 00000 n 
+0000025579 00000 n 
+0000029322 00000 n 
+0000029476 00000 n 
+0000032725 00000 n 
+0000032879 00000 n 
+0000036420 00000 n 
+0000036574 00000 n 
+0000040307 00000 n 
+0000040461 00000 n 
+0000042764 00000 n 
+trailer
+<< /Size 30 /Root 1 0 R >>
+startxref
+42918
+%%EOF

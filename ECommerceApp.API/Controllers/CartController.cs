@@ -59,8 +59,9 @@ public class CartController : ControllerBase
 
         if (existing is null)
         {
-            cart.Items.Add(new CartItem
+            _db.CartItems.Add(new CartItem
             {
+                CartId = cart.Id,
                 ProductId = request.ProductId,
                 Quantity = request.Quantity
             });

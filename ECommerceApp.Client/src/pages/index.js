@@ -1,0 +1,14 @@
+export { AuthPage } from "./auth/AuthPage";
+export { BrandDetailPage } from "./brands/BrandDetailPage";
+export { BrandsPage } from "./brands/BrandsPage";
+export { CartPage } from "./cart/CartPage";
+export { CheckoutPage } from "./checkout/CheckoutPage";
+export { ComparePage } from "./compare/ComparePage";
+export { DealsPage } from "./deals/DealsPage";
+export { HomePage } from "./shop/HomePage";
+export { NotFoundPage } from "./NotFoundPage";
+export { ProductDetailPage } from "./shop/ProductDetailPage";
+export { ProfilePage } from "./account/ProfilePage";
+export { RecommendationsPage } from "./recommendations/RecommendationsPage";
+export { SupportPage } from "./support/SupportPage";
+export { TrackOrderPage } from "./orders/TrackOrderPage";
