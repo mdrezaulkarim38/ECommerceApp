@@ -22,7 +22,7 @@ public class AuthService : IAuthService
         _configuration = configuration;
     }
 
-    public async Task<AuthResponse> LoginAsync(LoginRequest request)
+    public Task<AuthResponse> LoginAsync(LoginRequest request)
     {
         // TODO: Implement login logic
         throw new NotImplementedException();
@@ -71,37 +71,37 @@ public class AuthService : IAuthService
         return await GenerateAuthResponse(user);
     }
 
-    public async Task<AuthResponse> RefreshTokenAsync(string refreshToken)
+    public Task<AuthResponse> RefreshTokenAsync(string refreshToken)
     {
         // TODO: Implement refresh token logic
         throw new NotImplementedException();
     }
 
-    public async Task LogoutAsync(string refreshToken)
+    public Task LogoutAsync(string refreshToken)
     {
         // TODO: Implement logout logic
         throw new NotImplementedException();
     }
 
-    public async Task<bool> ForgotPasswordAsync(string email)
+    public Task<bool> ForgotPasswordAsync(string email)
     {
         // TODO: Implement forgot password logic
         throw new NotImplementedException();
     }
 
-    public async Task<bool> ResetPasswordAsync(ResetPasswordRequest request)
+    public Task<bool> ResetPasswordAsync(ResetPasswordRequest request)
     {
         // TODO: Implement reset password logic
         throw new NotImplementedException();
     }
 
-    public async Task<UserProfileDto> GetCurrentUserAsync(int userId)
+    public Task<UserProfileDto> GetCurrentUserAsync(int userId)
     {
         // TODO: Implement get current user logic
         throw new NotImplementedException();
     }
 
-    public async Task<bool> ChangePasswordAsync(int userId, ChangePasswordRequest request)
+    public Task<bool> ChangePasswordAsync(int userId, ChangePasswordRequest request)
     {
         // TODO: Implement change password logic
         throw new NotImplementedException();
