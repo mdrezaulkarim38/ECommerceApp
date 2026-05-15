@@ -1,14 +1,21 @@
 using EcommerceAppApi.Domain.Entities;
 using EcommerceAppApi.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace EcommerceAppApi.Infrastructure.Data;
 
 public static class DbSeeder
 {
-    public static void Seed(ApplicationDbContext context)
+    public static async Task SeedAsync(ApplicationDbContext context, ILogger logger)
     {
-        if (context.Categories.Any()) return;
+        if (await context.Categories.AnyAsync())
+        {
+            logger.LogInformation("Database already seeded, skipping");
+            return;
+        }
 
+        logger.LogInformation("Seeding categories...");
         var categories = new List<Category>
         {
             new() { Name = "Electronics", Slug = "electronics", Description = "Electronic devices and accessories", DisplayOrder = 1 },
@@ -17,8 +24,10 @@ public static class DbSeeder
             new() { Name = "Home & Living", Slug = "home-living", Description = "Home decor and living essentials", DisplayOrder = 4 },
             new() { Name = "Sports", Slug = "sports", Description = "Sports equipment and gear", DisplayOrder = 5 },
         };
-        context.Categories.AddRange(categories);
+        await context.Categories.AddRangeAsync(categories);
+        await context.SaveChangesAsync();
 
+        logger.LogInformation("Seeding brands...");
         var brands = new List<Brand>
         {
             new() { Name = "NovaTech", Slug = "novatech", Description = "Leading technology brand", LogoUrl = "NT", Website = "https://novatech.example.com" },
@@ -28,32 +37,33 @@ public static class DbSeeder
             new() { Name = "CozyHome", Slug = "cozyhome", Description = "Home and living essentials", LogoUrl = "CH", Website = "https://cozyhome.example.com" },
             new() { Name = "FitGear", Slug = "fitgear", Description = "Sports and fitness equipment", LogoUrl = "FG", Website = "https://fitgear.example.com" },
         };
-        context.Brands.AddRange(brands);
+        await context.Brands.AddRangeAsync(brands);
+        await context.SaveChangesAsync();
 
-        context.SaveChanges();
-
+        logger.LogInformation("Seeding products...");
         var products = new List<Product>
         {
-            new() { Name = "NovaSound Pro Wireless Headphones", Slug = "novasound-pro-wireless-headphones", Description = "Premium wireless headphones with active noise cancelation. Experience studio-quality sound with cutting-edge noise cancelation technology.", Price = 249.99m, CompareAtPrice = 349.99m, StockQuantity = 48, SalesCount = 520, CategoryId = categories[0].Id, BrandId = brands[0].Id, MainImageUrl = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop", Sku = "NT-HP-001", IsActive = true, IsFeatured = true, AverageRating = 4.8, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 2), SpecsJson = "{\"Battery\":\"42 hours\",\"Connectivity\":\"Bluetooth 5.3\",\"Warranty\":\"2 years\",\"Weight\":\"250g\"}", FeaturesJson = "[\"ANC\",\"Fast charge\",\"Multipoint pairing\",\"Foldable case\"]" },
-            new() { Name = "SmartView 4K Ultra HD Monitor", Slug = "smartview-4k-ultra-hd-monitor", Description = "27-inch 4K UHD monitor with HDR10+ support for stunning visuals. Perfect for creators and professionals.", Price = 449.99m, CompareAtPrice = 599.99m, StockQuantity = 30, SalesCount = 310, CategoryId = categories[0].Id, BrandId = brands[0].Id, MainImageUrl = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=400&fit=crop", Sku = "NT-MN-001", IsActive = true, IsFeatured = true, AverageRating = 4.7, TotalReviews = 3, CreatedAt = new DateTime(2026, 3, 28) },
-            new() { Name = "Quantum Mechanical Keyboard", Slug = "quantum-mechanical-keyboard", Description = "RGB mechanical keyboard with hot-swappable switches. Customize every key to your liking.", Price = 159.99m, CompareAtPrice = 199.99m, StockQuantity = 75, SalesCount = 210, CategoryId = categories[0].Id, BrandId = brands[0].Id, MainImageUrl = "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=400&h=400&fit=crop", Sku = "NT-KB-001", IsActive = true, IsFeatured = false, AverageRating = 4.3, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 10) },
-            new() { Name = "BassBlast Portable Speaker", Slug = "bassblast-portable-speaker", Description = "Waterproof portable speaker with 360-degree sound. Take the party anywhere you go.", Price = 79.99m, CompareAtPrice = 99.99m, StockQuantity = 120, SalesCount = 420, CategoryId = categories[0].Id, BrandId = brands[1].Id, MainImageUrl = "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop", Sku = "SW-SP-001", IsActive = true, IsFeatured = true, AverageRating = 4.6, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 5) },
-            new() { Name = "Urban Denim Jacket", Slug = "urban-denim-jacket", Description = "Classic denim jacket with a modern fit. A wardrobe essential that never goes out of style.", Price = 89.99m, CompareAtPrice = 129.99m, StockQuantity = 60, SalesCount = 650, CategoryId = categories[1].Id, BrandId = brands[2].Id, MainImageUrl = "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=400&h=400&fit=crop", Sku = "SC-DJ-001", IsActive = true, IsFeatured = true, AverageRating = 4.4, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 1) },
-            new() { Name = "Merino Wool Sweater", Slug = "merino-wool-sweater", Description = "Luxuriously soft merino wool sweater for ultimate comfort. Perfect for any occasion.", Price = 119.99m, CompareAtPrice = 159.99m, StockQuantity = 45, SalesCount = 190, CategoryId = categories[1].Id, BrandId = brands[2].Id, MainImageUrl = "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400&h=400&fit=crop", Sku = "SC-SW-001", IsActive = true, IsFeatured = false, AverageRating = 4.2, TotalReviews = 3, CreatedAt = new DateTime(2026, 3, 25) },
-            new() { Name = "The Art of Clean Code", Slug = "the-art-of-clean-code", Description = "Master the principles of writing clean, maintainable code. A must-read for every developer.", Price = 34.99m, CompareAtPrice = 44.99m, StockQuantity = 200, SalesCount = 255, CategoryId = categories[2].Id, BrandId = brands[3].Id, MainImageUrl = "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&h=400&fit=crop", Sku = "PT-BK-001", IsActive = true, IsFeatured = true, AverageRating = 4.8, TotalReviews = 3, CreatedAt = new DateTime(2026, 3, 15) },
-            new() { Name = "Scented Soy Candle Collection", Slug = "scented-soy-candle-collection", Description = "Hand-poured soy candles with natural essential oils. Set of 3 premium scents.", Price = 44.99m, CompareAtPrice = 59.99m, StockQuantity = 90, SalesCount = 175, CategoryId = categories[3].Id, BrandId = brands[4].Id, MainImageUrl = "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=400&h=400&fit=crop", Sku = "CH-CD-001", IsActive = true, IsFeatured = true, AverageRating = 4.5, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 8) },
-            new() { Name = "Bamboo Kitchen Organizer Set", Slug = "bamboo-kitchen-organizer-set", Description = "Eco-friendly bamboo kitchen organizers. Sustainable storage solutions for your kitchen.", Price = 39.99m, CompareAtPrice = 54.99m, StockQuantity = 65, SalesCount = 295, CategoryId = categories[3].Id, BrandId = brands[4].Id, MainImageUrl = "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop", Sku = "CH-KT-001", IsActive = true, IsFeatured = false, AverageRating = 4.1, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 12) },
-            new() { Name = "Premium Yoga Mat", Slug = "premium-yoga-mat", Description = "Extra-thick non-slip yoga mat for ultimate comfort. Perfect for yoga, pilates, and stretching.", Price = 69.99m, CompareAtPrice = 89.99m, StockQuantity = 55, SalesCount = 405, CategoryId = categories[4].Id, BrandId = brands[5].Id, MainImageUrl = "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400&h=400&fit=crop", Sku = "FG-YM-001", IsActive = true, IsFeatured = true, AverageRating = 4.6, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 3) },
-            new() { Name = "Adjustable Dumbbell Set", Slug = "adjustable-dumbbell-set", Description = "Space-saving adjustable dumbbells from 5-52.5 lbs. Replace 15 sets of dumbbells with one.", Price = 349.99m, CompareAtPrice = 449.99m, StockQuantity = 20, SalesCount = 330, CategoryId = categories[4].Id, BrandId = brands[5].Id, MainImageUrl = "https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?w=400&h=400&fit=crop", Sku = "FG-DB-001", IsActive = true, IsFeatured = false, AverageRating = 4.8, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 6) },
-            new() { Name = "Wireless Charging Pad", Slug = "wireless-charging-pad", Description = "Fast wireless charger compatible with all Qi devices. Sleek and minimalist design.", Price = 29.99m, CompareAtPrice = 39.99m, StockQuantity = 150, SalesCount = 160, CategoryId = categories[0].Id, BrandId = brands[0].Id, MainImageUrl = "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=400&h=400&fit=crop", Sku = "NT-WC-001", IsActive = true, IsFeatured = false, AverageRating = 4.0, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 14) },
-            new() { Name = "Slim Fit Chinos", Slug = "slim-fit-chinos", Description = "Stretch comfort slim fit chinos for a sharp casual look. Available in multiple colors.", Price = 59.99m, StockQuantity = 80, SalesCount = 135, CategoryId = categories[1].Id, BrandId = brands[2].Id, MainImageUrl = "https://images.unsplash.com/photo-1473966968604-f19f4b563cfd?w=400&h=400&fit=crop", Sku = "SC-CH-001", IsActive = true, IsFeatured = false, AverageRating = 4.3, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 9) },
-            new() { Name = "Data Structures & Algorithms", Slug = "data-structures-algorithms", Description = "Comprehensive guide to mastering data structures and algorithms. With practical examples.", Price = 44.99m, StockQuantity = 180, SalesCount = 345, CategoryId = categories[2].Id, BrandId = brands[3].Id, MainImageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop", Sku = "PT-BK-002", IsActive = true, IsFeatured = false, AverageRating = 4.7, TotalReviews = 3, CreatedAt = new DateTime(2026, 3, 20) },
-            new() { Name = "Microfiber Cleaning Cloth Set", Slug = "microfiber-cleaning-cloth-set", Description = "Premium microfiber cleaning cloths. Lint-free and scratch-free cleaning for all surfaces.", Price = 14.99m, StockQuantity = 300, SalesCount = 880, CategoryId = categories[3].Id, BrandId = brands[4].Id, MainImageUrl = "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=400&h=400&fit=crop", Sku = "CH-MC-001", IsActive = true, IsFeatured = false, AverageRating = 4.2, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 11) },
-            new() { Name = "Resistance Bands Set", Slug = "resistance-bands-set", Description = "Set of 5 resistance bands with different strengths. Perfect for home workouts.", Price = 24.99m, CompareAtPrice = 34.99m, StockQuantity = 100, SalesCount = 415, CategoryId = categories[4].Id, BrandId = brands[5].Id, MainImageUrl = "https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=400&h=400&fit=crop", Sku = "FG-RB-001", IsActive = true, IsFeatured = false, AverageRating = 4.4, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 7) },
+            new() { Name = "NovaSound Pro Wireless Headphones", Slug = "novasound-pro-wireless-headphones", Description = "Premium wireless headphones with active noise cancelation.", Price = 249.99m, CompareAtPrice = 349.99m, StockQuantity = 48, SalesCount = 520, CategoryId = categories[0].Id, BrandId = brands[0].Id, MainImageUrl = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop", Sku = "NT-HP-001", IsActive = true, IsFeatured = true, AverageRating = 4.8, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 2), SpecsJson = "{\"Battery\":\"42 hours\",\"Connectivity\":\"Bluetooth 5.3\"}", FeaturesJson = "[\"ANC\",\"Fast charge\",\"Multipoint pairing\"]" },
+            new() { Name = "SmartView 4K Ultra HD Monitor", Slug = "smartview-4k-ultra-hd-monitor", Description = "27-inch 4K UHD monitor with HDR10+ support.", Price = 449.99m, CompareAtPrice = 599.99m, StockQuantity = 30, SalesCount = 310, CategoryId = categories[0].Id, BrandId = brands[0].Id, MainImageUrl = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=400&fit=crop", Sku = "NT-MN-001", IsActive = true, IsFeatured = true, AverageRating = 4.7, TotalReviews = 3, CreatedAt = new DateTime(2026, 3, 28) },
+            new() { Name = "Quantum Mechanical Keyboard", Slug = "quantum-mechanical-keyboard", Description = "RGB mechanical keyboard with hot-swappable switches.", Price = 159.99m, CompareAtPrice = 199.99m, StockQuantity = 75, SalesCount = 210, CategoryId = categories[0].Id, BrandId = brands[0].Id, MainImageUrl = "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=400&h=400&fit=crop", Sku = "NT-KB-001", IsActive = true, IsFeatured = false, AverageRating = 4.3, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 10) },
+            new() { Name = "BassBlast Portable Speaker", Slug = "bassblast-portable-speaker", Description = "Waterproof portable speaker with 360-degree sound.", Price = 79.99m, CompareAtPrice = 99.99m, StockQuantity = 120, SalesCount = 420, CategoryId = categories[0].Id, BrandId = brands[1].Id, MainImageUrl = "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop", Sku = "SW-SP-001", IsActive = true, IsFeatured = true, AverageRating = 4.6, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 5) },
+            new() { Name = "Urban Denim Jacket", Slug = "urban-denim-jacket", Description = "Classic denim jacket with a modern fit.", Price = 89.99m, CompareAtPrice = 129.99m, StockQuantity = 60, SalesCount = 650, CategoryId = categories[1].Id, BrandId = brands[2].Id, MainImageUrl = "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=400&h=400&fit=crop", Sku = "SC-DJ-001", IsActive = true, IsFeatured = true, AverageRating = 4.4, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 1) },
+            new() { Name = "Merino Wool Sweater", Slug = "merino-wool-sweater", Description = "Luxuriously soft merino wool sweater.", Price = 119.99m, CompareAtPrice = 159.99m, StockQuantity = 45, SalesCount = 190, CategoryId = categories[1].Id, BrandId = brands[2].Id, MainImageUrl = "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400&h=400&fit=crop", Sku = "SC-SW-001", IsActive = true, IsFeatured = false, AverageRating = 4.2, TotalReviews = 3, CreatedAt = new DateTime(2026, 3, 25) },
+            new() { Name = "The Art of Clean Code", Slug = "the-art-of-clean-code", Description = "Master the principles of writing clean, maintainable code.", Price = 34.99m, CompareAtPrice = 44.99m, StockQuantity = 200, SalesCount = 255, CategoryId = categories[2].Id, BrandId = brands[3].Id, MainImageUrl = "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&h=400&fit=crop", Sku = "PT-BK-001", IsActive = true, IsFeatured = true, AverageRating = 4.8, TotalReviews = 3, CreatedAt = new DateTime(2026, 3, 15) },
+            new() { Name = "Scented Soy Candle Collection", Slug = "scented-soy-candle-collection", Description = "Hand-poured soy candles with natural essential oils.", Price = 44.99m, CompareAtPrice = 59.99m, StockQuantity = 90, SalesCount = 175, CategoryId = categories[3].Id, BrandId = brands[4].Id, MainImageUrl = "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=400&h=400&fit=crop", Sku = "CH-CD-001", IsActive = true, IsFeatured = true, AverageRating = 4.5, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 8) },
+            new() { Name = "Bamboo Kitchen Organizer Set", Slug = "bamboo-kitchen-organizer-set", Description = "Eco-friendly bamboo kitchen organizers.", Price = 39.99m, CompareAtPrice = 54.99m, StockQuantity = 65, SalesCount = 295, CategoryId = categories[3].Id, BrandId = brands[4].Id, MainImageUrl = "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop", Sku = "CH-KT-001", IsActive = true, IsFeatured = false, AverageRating = 4.1, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 12) },
+            new() { Name = "Premium Yoga Mat", Slug = "premium-yoga-mat", Description = "Extra-thick non-slip yoga mat.", Price = 69.99m, CompareAtPrice = 89.99m, StockQuantity = 55, SalesCount = 405, CategoryId = categories[4].Id, BrandId = brands[5].Id, MainImageUrl = "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400&h=400&fit=crop", Sku = "FG-YM-001", IsActive = true, IsFeatured = true, AverageRating = 4.6, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 3) },
+            new() { Name = "Adjustable Dumbbell Set", Slug = "adjustable-dumbbell-set", Description = "Space-saving adjustable dumbbells from 5-52.5 lbs.", Price = 349.99m, CompareAtPrice = 449.99m, StockQuantity = 20, SalesCount = 330, CategoryId = categories[4].Id, BrandId = brands[5].Id, MainImageUrl = "https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?w=400&h=400&fit=crop", Sku = "FG-DB-001", IsActive = true, IsFeatured = false, AverageRating = 4.8, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 6) },
+            new() { Name = "Wireless Charging Pad", Slug = "wireless-charging-pad", Description = "Fast wireless charger compatible with all Qi devices.", Price = 29.99m, CompareAtPrice = 39.99m, StockQuantity = 150, SalesCount = 160, CategoryId = categories[0].Id, BrandId = brands[0].Id, MainImageUrl = "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=400&h=400&fit=crop", Sku = "NT-WC-001", IsActive = true, IsFeatured = false, AverageRating = 4.0, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 14) },
+            new() { Name = "Slim Fit Chinos", Slug = "slim-fit-chinos", Description = "Stretch comfort slim fit chinos.", Price = 59.99m, StockQuantity = 80, SalesCount = 135, CategoryId = categories[1].Id, BrandId = brands[2].Id, MainImageUrl = "https://images.unsplash.com/photo-1473966968604-f19f4b563cfd?w=400&h=400&fit=crop", Sku = "SC-CH-001", IsActive = true, IsFeatured = false, AverageRating = 4.3, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 9) },
+            new() { Name = "Data Structures & Algorithms", Slug = "data-structures-algorithms", Description = "Comprehensive guide to mastering data structures.", Price = 44.99m, StockQuantity = 180, SalesCount = 345, CategoryId = categories[2].Id, BrandId = brands[3].Id, MainImageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop", Sku = "PT-BK-002", IsActive = true, IsFeatured = false, AverageRating = 4.7, TotalReviews = 3, CreatedAt = new DateTime(2026, 3, 20) },
+            new() { Name = "Microfiber Cleaning Cloth Set", Slug = "microfiber-cleaning-cloth-set", Description = "Premium microfiber cleaning cloths.", Price = 14.99m, StockQuantity = 300, SalesCount = 880, CategoryId = categories[3].Id, BrandId = brands[4].Id, MainImageUrl = "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=400&h=400&fit=crop", Sku = "CH-MC-001", IsActive = true, IsFeatured = false, AverageRating = 4.2, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 11) },
+            new() { Name = "Resistance Bands Set", Slug = "resistance-bands-set", Description = "Set of 5 resistance bands with different strengths.", Price = 24.99m, CompareAtPrice = 34.99m, StockQuantity = 100, SalesCount = 415, CategoryId = categories[4].Id, BrandId = brands[5].Id, MainImageUrl = "https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=400&h=400&fit=crop", Sku = "FG-RB-001", IsActive = true, IsFeatured = false, AverageRating = 4.4, TotalReviews = 3, CreatedAt = new DateTime(2026, 4, 7) },
         };
-        context.Products.AddRange(products);
-        context.SaveChanges();
+        await context.Products.AddRangeAsync(products);
+        await context.SaveChangesAsync();
 
+        logger.LogInformation("Seeding users...");
         var adminUser = new User
         {
             Name = "Admin",
@@ -63,7 +73,7 @@ public static class DbSeeder
             Role = Role.Admin,
             CreatedAt = new DateTime(2026, 1, 1)
         };
-        context.Users.Add(adminUser);
+        await context.Users.AddAsync(adminUser);
 
         var users = new List<User>
         {
@@ -72,25 +82,30 @@ public static class DbSeeder
             new() { Name = "Nusrat Jahan", Email = "nusrat@example.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("user123"), PhoneNumber = "+8801712345681", Role = Role.User, CreatedAt = new DateTime(2026, 3, 1) },
             new() { Name = "Rafi Ahmed", Email = "rafi@example.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("user123"), PhoneNumber = "+8801712345682", Role = Role.User, CreatedAt = new DateTime(2026, 3, 10) },
         };
-        context.Users.AddRange(users);
-        context.SaveChanges();
+        await context.Users.AddRangeAsync(users);
+        await context.SaveChangesAsync();
 
         foreach (var user in users)
         {
-            context.Carts.Add(new Cart { UserId = user.Id, CreatedAt = DateTime.UtcNow });
-            context.Wishlists.Add(new Wishlist { UserId = user.Id, CreatedAt = DateTime.UtcNow });
+            await context.Carts.AddAsync(new Cart { UserId = user.Id, CreatedAt = DateTime.UtcNow });
+            await context.Wishlists.AddAsync(new Wishlist { UserId = user.Id, CreatedAt = DateTime.UtcNow });
         }
+        await context.SaveChangesAsync();
 
-        context.Addresses.AddRange(
-            new Address { UserId = adminUser.Id, FullName = "Admin", Street = "123 Admin St", City = "Dhaka", State = "Dhaka", ZipCode = "1205", Country = "Bangladesh", PhoneNumber = "+8801712345678", IsDefault = true },
-            new Address { UserId = users[0].Id, FullName = "Ayesha Rahman", Street = "45 Gulshan Ave", City = "Dhaka", State = "Dhaka", ZipCode = "1212", Country = "Bangladesh", PhoneNumber = "+8801712345679", IsDefault = true },
-            new Address { UserId = users[0].Id, FullName = "Ayesha Rahman", Street = "12 Uttara Rd", City = "Dhaka", State = "Dhaka", ZipCode = "1230", Country = "Bangladesh", PhoneNumber = "+8801712345679", IsDefault = false },
-            new Address { UserId = users[1].Id, FullName = "Tanvir Hasan", Street = "78 Banani Dr", City = "Dhaka", State = "Dhaka", ZipCode = "1213", Country = "Bangladesh", PhoneNumber = "+8801712345680", IsDefault = true },
-            new Address { UserId = users[2].Id, FullName = "Nusrat Jahan", Street = "56 Dhanmondi Rd", City = "Dhaka", State = "Dhaka", ZipCode = "1209", Country = "Bangladesh", PhoneNumber = "+8801712345681", IsDefault = true },
-            new Address { UserId = users[3].Id, FullName = "Rafi Ahmed", Street = "34 Mirpur Rd", City = "Dhaka", State = "Dhaka", ZipCode = "1216", Country = "Bangladesh", PhoneNumber = "+8801712345682", IsDefault = true }
-        );
-        context.SaveChanges();
+        logger.LogInformation("Seeding addresses...");
+        var addresses = new List<Address>
+        {
+            new() { UserId = adminUser.Id, FullName = "Admin", Street = "123 Admin St", City = "Dhaka", State = "Dhaka", ZipCode = "1205", Country = "Bangladesh", PhoneNumber = "+8801712345678", IsDefault = true },
+            new() { UserId = users[0].Id, FullName = "Ayesha Rahman", Street = "45 Gulshan Ave", City = "Dhaka", State = "Dhaka", ZipCode = "1212", Country = "Bangladesh", PhoneNumber = "+8801712345679", IsDefault = true },
+            new() { UserId = users[0].Id, FullName = "Ayesha Rahman", Street = "12 Uttara Rd", City = "Dhaka", State = "Dhaka", ZipCode = "1230", Country = "Bangladesh", PhoneNumber = "+8801712345679", IsDefault = false },
+            new() { UserId = users[1].Id, FullName = "Tanvir Hasan", Street = "78 Banani Dr", City = "Dhaka", State = "Dhaka", ZipCode = "1213", Country = "Bangladesh", PhoneNumber = "+8801712345680", IsDefault = true },
+            new() { UserId = users[2].Id, FullName = "Nusrat Jahan", Street = "56 Dhanmondi Rd", City = "Dhaka", State = "Dhaka", ZipCode = "1209", Country = "Bangladesh", PhoneNumber = "+8801712345681", IsDefault = true },
+            new() { UserId = users[3].Id, FullName = "Rafi Ahmed", Street = "34 Mirpur Rd", City = "Dhaka", State = "Dhaka", ZipCode = "1216", Country = "Bangladesh", PhoneNumber = "+8801712345682", IsDefault = true }
+        };
+        await context.Addresses.AddRangeAsync(addresses);
+        await context.SaveChangesAsync();
 
+        logger.LogInformation("Seeding orders...");
         var orderStatuses = new[] { OrderStatus.Pending, OrderStatus.Processing, OrderStatus.Shipped, OrderStatus.Delivered, OrderStatus.Cancelled, OrderStatus.Refunded };
         var paymentMethods = new[] { "Credit Card", "PayPal", "Cash on Delivery" };
         var rng = new Random(42);
@@ -141,16 +156,17 @@ public static class DbSeeder
                 ChangedAt = order.CreatedAt
             });
 
-            context.Orders.Add(order);
+            await context.Orders.AddAsync(order);
         }
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
+        logger.LogInformation("Seeding reviews...");
         foreach (var product in products)
         {
             var reviewers = users.OrderBy(_ => rng.Next()).Take(3).ToList();
             foreach (var reviewer in reviewers)
             {
-                context.Reviews.Add(new Review
+                await context.Reviews.AddAsync(new Review
                 {
                     ProductId = product.Id,
                     UserId = reviewer.Id,
@@ -160,10 +176,13 @@ public static class DbSeeder
                 });
             }
         }
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
-        context.Settings.Add(new Settings());
-        context.SaveChanges();
+        logger.LogInformation("Seeding settings...");
+        await context.Settings.AddAsync(new Settings());
+        await context.SaveChangesAsync();
+
+        logger.LogInformation("Database seeded successfully");
     }
 
     private static string GetReviewComment(int index) => index switch

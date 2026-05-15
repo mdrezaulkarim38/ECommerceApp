@@ -11,7 +11,12 @@ namespace EcommerceAppApi.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    public AuthController(IAuthService authService) => _authService = authService;
+    private readonly ILogger<AuthController> _logger;
+    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+    {
+        _authService = authService;
+        _logger = logger;
+    }
 
     [HttpPost("register")]
     public async Task<ActionResult<ApiResponse<AuthResponse>>> Register([FromBody] RegisterRequest request)
@@ -19,10 +24,12 @@ public class AuthController : ControllerBase
         try
         {
             var result = await _authService.RegisterAsync(request);
+            _logger.LogInformation("User registered: {Email}", request.Email);
             return Ok(ApiResponse<AuthResponse>.Ok(result, "Registration successful"));
         }
         catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Registration failed for {Email}", request.Email);
             return BadRequest(ApiResponse<AuthResponse>.Error(ex.Message));
         }
     }
@@ -33,10 +40,12 @@ public class AuthController : ControllerBase
         try
         {
             var result = await _authService.LoginAsync(request);
+            _logger.LogInformation("User logged in: {Email}", request.Email);
             return Ok(ApiResponse<AuthResponse>.Ok(result, "Login successful"));
         }
         catch (UnauthorizedAccessException ex)
         {
+            _logger.LogWarning("Login failed for {Email}: {Message}", request.Email, ex.Message);
             return Unauthorized(ApiResponse<AuthResponse>.Error(ex.Message));
         }
     }

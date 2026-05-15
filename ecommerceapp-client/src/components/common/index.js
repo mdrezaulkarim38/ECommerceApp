@@ -1,11 +1,13 @@
 export { BackToTop } from "./BackToTop";
 export { Breadcrumbs } from "./Breadcrumbs";
 export { EmptyState } from "./EmptyState";
+export { ErrorBoundary } from "./ErrorBoundary";
 export { Footer } from "./Footer";
 export { Header } from "./Header";
 export { Modal } from "./Modal";
 export { NewsletterPopup } from "./NewsletterPopup";
 export { ProductCard } from "./ProductCard";
+export { ProductCardSkeletons } from "./ProductCardSkeleton";
 export { ProductRow } from "./ProductRow";
 export { SearchInput } from "./SearchInput";
 export { Stars } from "./Stars";

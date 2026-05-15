@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { BackToTop, Footer, Header, NewsletterPopup } from "./components/common";
+import { BackToTop, ErrorBoundary, Footer, Header, NewsletterPopup } from "./components/common";
 import { useStore } from "./context/StoreContext";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import {
@@ -51,7 +51,8 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-700 transition-colors dark:bg-slate-950 dark:text-slate-200">
+    <ErrorBoundary>
+      <div className="min-h-screen bg-slate-50 text-slate-700 transition-colors dark:bg-slate-950 dark:text-slate-200">
       {!isAdminRoute && <Header />}
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -133,5 +134,6 @@ export default function App() {
       {!isAdminRoute && <NewsletterPopup />}
       <BackToTop />
     </div>
+    </ErrorBoundary>
   );
 }

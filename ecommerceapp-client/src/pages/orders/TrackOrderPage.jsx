@@ -8,7 +8,8 @@ export function TrackOrderPage() {
   const { orderId } = useParams();
   const { getOrder, currentUser, isAdmin } = useStore();
   const order = getOrder(orderId);
-  if (!order || (!isAdmin && order.userId !== currentUser.id)) {
+  const isOwner = !order || !order.userId || order.userId === currentUser?.id || order.userId === currentUser?.id?.replace("u-", "");
+  if (!order || (!isAdmin && !isOwner)) {
     return <main className="mx-auto max-w-7xl px-4 py-12"><EmptyState icon={Truck} title="Order not found" message="The order ID is unavailable for this account." /></main>;
   }
   const steps = ["Pending", "Confirmed", "Processing", "Shipped", "Out for Delivery", "Delivered"];

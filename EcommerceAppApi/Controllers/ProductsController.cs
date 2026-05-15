@@ -9,13 +9,19 @@ namespace EcommerceAppApi.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IProductService _productService;
-    public ProductsController(IProductService productService) => _productService = productService;
+    private readonly ILogger<ProductsController> _logger;
+    public ProductsController(IProductService productService, ILogger<ProductsController> logger)
+    {
+        _productService = productService;
+        _logger = logger;
+    }
 
     [HttpGet]
     public async Task<ActionResult<ApiResponse<PaginatedResponse<ProductDto>>>> GetProducts(
         [FromQuery] ProductListRequest request)
     {
         var result = await _productService.GetProductsAsync(request);
+        _logger.LogInformation("Products listed: page {Page}, {Count} items", request.Page, result.Items.Count());
         return Ok(ApiResponse<PaginatedResponse<ProductDto>>.Ok(result));
     }
 

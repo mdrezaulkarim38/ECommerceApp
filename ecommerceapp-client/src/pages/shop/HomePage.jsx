@@ -2,14 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Filter, SlidersHorizontal, Sparkles } from "lucide-react";
-import { ProductCard, ProductRow, SearchInput } from "../../components/common";
+import { ProductCard, ProductCardSkeletons, ProductRow, SearchInput } from "../../components/common";
 import { useStore } from "../../context/StoreContext";
+import { productService } from "../../services/api";
 
-const sorters = {
-  Newest: (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
-  "Price: Low to High": (a, b) => a.price - b.price,
-  "Price: High to Low": (a, b) => b.price - a.price,
-  Rating: (a, b) => b.rating - a.rating,
+const sortMap = {
+  Newest: { sortBy: "newest", sortOrder: "desc" },
+  "Price: Low to High": { sortBy: "price", sortOrder: "asc" },
+  "Price: High to Low": { sortBy: "price", sortOrder: "desc" },
+  Rating: { sortBy: "rating", sortOrder: "desc" },
 };
 
 const heroSlides = [
@@ -37,32 +38,57 @@ const heroSlides = [
 ];
 
 export function HomePage() {
-  const { state, recentlyViewedProducts } = useStore();
+  const { state, recentlyViewedProducts, loading: storeLoading } = useStore();
   const navigate = useNavigate();
   const [slide, setSlide] = useState(0);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
-  const catNames = useMemo(() => (state.categories || []).map((c) => c.name || c), [state.categories]);
   const [sort, setSort] = useState("Newest");
   const [page, setPage] = useState(1);
+  const [products, setProducts] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
   const perPage = 8;
-  const loading = false;
+
+  const catNames = useMemo(() => (state.categories || []).map((c) => c.name || c), [state.categories]);
+  const catByName = useMemo(() => {
+    const map = {};
+    (state.categories || []).forEach((c) => { map[c.name || c] = c.id; });
+    return map;
+  }, [state.categories]);
 
   useEffect(() => {
     const timer = setInterval(() => setSlide((value) => (value + 1) % heroSlides.length), 4500);
     return () => clearInterval(timer);
   }, []);
 
-  const filtered = useMemo(() => {
-    return [...state.products]
-      .filter((product) => (category === "All" ? true : product.category === category))
-      .filter((product) => `${product.name} ${product.brand} ${product.category}`.toLowerCase().includes(query.toLowerCase()))
-      .sort(sorters[sort]);
-  }, [state.products, category, query, sort]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const categoryId = category === "All" ? null : catByName[category];
+        const { sortBy, sortOrder } = sortMap[sort] || {};
+        const result = await productService.getProducts({
+          search: query || undefined,
+          categoryId,
+          sortBy,
+          sortOrder,
+          page,
+          pageSize: perPage,
+        });
+        setProducts(result.items);
+        setTotalPages(result.totalPages);
+      } catch {
+        setProducts([]);
+        setTotalPages(1);
+      }
+      setLoading(false);
+    };
+    fetchProducts();
+  }, [query, category, sort, page, catByName]);
 
-  const paged = filtered.slice((page - 1) * perPage, page * perPage);
-  const pages = Math.max(1, Math.ceil(filtered.length / perPage));
   const activeHero = heroSlides[slide];
+  const showLoading = storeLoading || loading;
 
   return (
     <main>
@@ -139,9 +165,12 @@ export function HomePage() {
             <select
               className="h-12 w-full appearance-none rounded-full border border-slate-200 bg-white pl-11 pr-4 text-sm font-semibold outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-white"
               value={sort}
-              onChange={(event) => setSort(event.target.value)}
+              onChange={(event) => {
+                setSort(event.target.value);
+                setPage(1);
+              }}
             >
-              {Object.keys(sorters).map((item) => (
+              {Object.keys(sortMap).map((item) => (
                 <option key={item}>{item}</option>
               ))}
             </select>
@@ -168,42 +197,45 @@ export function HomePage() {
           ))}
         </div>
 
-        {loading ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <div key={index} className="h-[360px] animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800" />
-            ))}
+        {showLoading ? (
+          <ProductCardSkeletons count={8} />
+        ) : products.length === 0 ? (
+          <div className="py-20 text-center">
+            <p className="text-xl font-bold text-slate-400">No products found</p>
+            <p className="mt-2 text-slate-500">Try adjusting your search or filters</p>
           </div>
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {paged.map((product) => (
+            {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
         )}
 
-        <div className="mt-8 flex items-center justify-center gap-2">
-          {Array.from({ length: pages }).map((_, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => setPage(index + 1)}
-              className={`grid h-10 w-10 place-items-center rounded-full text-sm font-bold ${
-                page === index + 1
-                  ? "bg-slate-950 text-white dark:bg-teal-500 dark:text-slate-950"
-                  : "bg-white text-slate-600 ring-1 ring-slate-200 dark:bg-slate-900 dark:text-slate-200 dark:ring-slate-700"
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
+        {totalPages > 1 && (
+          <div className="mt-8 flex items-center justify-center gap-2">
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => setPage(index + 1)}
+                className={`grid h-10 w-10 place-items-center rounded-full text-sm font-bold ${
+                  page === index + 1
+                    ? "bg-slate-950 text-white dark:bg-teal-500 dark:text-slate-950"
+                    : "bg-white text-slate-600 ring-1 ring-slate-200 dark:bg-slate-900 dark:text-slate-200 dark:ring-slate-700"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+        )}
       </section>
 
       <ProductRow
         products={recentlyViewedProducts}
         title="Recently Viewed"
-        subtitle="Stored in localStorage per guest or logged-in user."
+        subtitle="Products you have browsed recently."
       />
     </main>
   );
