@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 import { ProductModal, StatusPill } from "../../../components/admin";
 import { useStore } from "../../../context/StoreContext";
 import { emptyProduct } from "../../../data/adminDashboardData";
-import { categories } from "../../../data/mockData";
 import { formatCurrency } from "../../../utils/pricing";
 
 export function ProductsManagement() {
@@ -39,10 +38,10 @@ export function ProductsManagement() {
             <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input className="input pl-11" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" />
           </label>
-          <select className="input" value={category} onChange={(event) => setCategory(event.target.value)}>
-            <option>All</option>
-            {categories.map((item) => <option key={item}>{item}</option>)}
-          </select>
+            <select className="input" value={category} onChange={(event) => setCategory(event.target.value)}>
+              <option>All</option>
+              {(state.categories || []).map((item) => <option key={item.slug || item.id}>{item.name || item}</option>)}
+            </select>
         </div>
         <div className="flex flex-wrap gap-2">
           <button className="btn-secondary" type="button" onClick={() => toast.success("Bulk import simulated")}><Upload size={18} /> Import</button>

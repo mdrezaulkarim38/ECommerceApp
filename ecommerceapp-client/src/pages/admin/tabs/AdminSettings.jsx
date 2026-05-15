@@ -1,12 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Save } from "lucide-react";
 import toast from "react-hot-toast";
 import { Field, Panel, Toggle } from "../../../components/admin";
 import { useStore } from "../../../context/StoreContext";
+import { adminService } from "../../../services/api";
 
 export function AdminSettings() {
   const { state, actions } = useStore();
   const [form, setForm] = useState(state.settings);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const settings = await adminService.getSettings();
+        setForm(settings);
+      } catch { /* ignore */ }
+    })();
+  }, []);
   const update = (key, value) => setForm((current) => ({ ...current, [key]: value }));
   return (
     <form

@@ -2,11 +2,10 @@ import { useState } from "react";
 import { Save, X } from "lucide-react";
 import { Modal } from "../common";
 import { useStore } from "../../context/StoreContext";
-import { categories } from "../../data/mockData";
 import { emptyProduct } from "../../data/adminDashboardData";
 
 export function ProductModal({ open, product, onClose }) {
-  const { actions } = useStore();
+  const { state, actions } = useStore();
   const [form, setForm] = useState(product || emptyProduct);
 
   if (!form) return null;
@@ -50,7 +49,7 @@ export function ProductModal({ open, product, onClose }) {
         <div>
           <label className="label">Category</label>
           <select className="input" value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })}>
-            {categories.map((item) => <option key={item}>{item}</option>)}
+            {(state.categories || []).map((item) => <option key={item.id || item.name}>{item.name || item}</option>)}
           </select>
         </div>
         <div>

@@ -35,8 +35,20 @@ function ProtectedRoute({ children, admin = false }) {
 }
 
 export default function App() {
+  const { state } = useStore();
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+
+  if (state.loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="text-center">
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-teal-600 border-t-transparent" />
+          <p className="mt-4 text-slate-500">Loading SmartShop...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-700 transition-colors dark:bg-slate-950 dark:text-slate-200">

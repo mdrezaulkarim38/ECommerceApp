@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { Filter, SlidersHorizontal, Sparkles } from "lucide-react";
 import { ProductCard, ProductRow, SearchInput } from "../../components/common";
 import { useStore } from "../../context/StoreContext";
-import { categories } from "../../data/mockData";
 
 const sorters = {
   Newest: (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
@@ -43,6 +42,7 @@ export function HomePage() {
   const [slide, setSlide] = useState(0);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
+  const catNames = useMemo(() => (state.categories || []).map((c) => c.name || c), [state.categories]);
   const [sort, setSort] = useState("Newest");
   const [page, setPage] = useState(1);
   const perPage = 8;
@@ -129,7 +129,7 @@ export function HomePage() {
               }}
             >
               <option>All</option>
-              {categories.map((item) => (
+              {catNames.map((item) => (
                 <option key={item}>{item}</option>
               ))}
             </select>
@@ -149,7 +149,7 @@ export function HomePage() {
         </div>
 
         <div className="mb-6 flex flex-wrap gap-2">
-          {["All", ...categories].map((item) => (
+          {["All", ...catNames].map((item) => (
             <button
               type="button"
               key={item}

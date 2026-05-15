@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Info } from "../../../components/admin";
 import { Modal, StatusBadge } from "../../../components/common";
 import { useStore } from "../../../context/StoreContext";
-import { orderStatuses } from "../../../data/mockData";
 import { formatCurrency } from "../../../utils/pricing";
+
+const orderStatuses = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Refunded"];
 
 export function OrdersManagement() {
   const { state, actions } = useStore();

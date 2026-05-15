@@ -17,6 +17,9 @@ public class Product
     public bool IsFeatured { get; set; }
     public double? AverageRating { get; set; }
     public int TotalReviews { get; set; }
+    public int SalesCount { get; set; }
+    public string? SpecsJson { get; set; }
+    public string? FeaturesJson { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     

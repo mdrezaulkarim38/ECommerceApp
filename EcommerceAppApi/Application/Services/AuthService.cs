@@ -22,22 +22,23 @@ public class AuthService : IAuthService
         _configuration = configuration;
     }
 
-    public Task<AuthResponse> LoginAsync(LoginRequest request)
+    public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
-        // TODO: Implement login logic
-        throw new NotImplementedException();
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            throw new UnauthorizedAccessException("Invalid email or password");
+
+        return await GenerateAuthResponse(user);
     }
 
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
         if (request.Password != request.ConfirmPassword)
-        {
             throw new Exception("Passwords do not match");
-        }
+
         if (await _context.Users.AnyAsync(u => u.Email == request.Email))
-        {
             throw new Exception("Email already exists");
-        }
+
         var user = new User
         {
             Name = request.Name,
@@ -49,6 +50,7 @@ public class AuthService : IAuthService
         };
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
+
         _context.Carts.Add(new Cart { UserId = user.Id, CreatedAt = DateTime.UtcNow });
         _context.Wishlists.Add(new Wishlist { UserId = user.Id, CreatedAt = DateTime.UtcNow });
 
@@ -71,45 +73,84 @@ public class AuthService : IAuthService
         return await GenerateAuthResponse(user);
     }
 
-    public Task<AuthResponse> RefreshTokenAsync(string refreshToken)
+    public async Task<AuthResponse> RefreshTokenAsync(string refreshToken)
     {
-        // TODO: Implement refresh token logic
-        throw new NotImplementedException();
+        var storedToken = await _context.UserRefreshTokens
+            .Include(t => t.User)
+            .FirstOrDefaultAsync(t => t.Token == refreshToken && !t.IsRevoked);
+
+        if (storedToken == null || storedToken.ExpiresAt < DateTime.UtcNow)
+            throw new UnauthorizedAccessException("Invalid or expired refresh token");
+
+        storedToken.IsRevoked = true;
+        await _context.SaveChangesAsync();
+
+        return await GenerateAuthResponse(storedToken.User);
     }
 
-    public Task LogoutAsync(string refreshToken)
+    public async Task LogoutAsync(string refreshToken)
     {
-        // TODO: Implement logout logic
-        throw new NotImplementedException();
+        var storedToken = await _context.UserRefreshTokens
+            .FirstOrDefaultAsync(t => t.Token == refreshToken);
+
+        if (storedToken != null)
+        {
+            storedToken.IsRevoked = true;
+            await _context.SaveChangesAsync();
+        }
     }
 
-    public Task<bool> ForgotPasswordAsync(string email)
+    public async Task<bool> ForgotPasswordAsync(string email)
     {
-        // TODO: Implement forgot password logic
-        throw new NotImplementedException();
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        return user != null;
     }
 
-    public Task<bool> ResetPasswordAsync(ResetPasswordRequest request)
+    public async Task<bool> ResetPasswordAsync(ResetPasswordRequest request)
     {
-        // TODO: Implement reset password logic
-        throw new NotImplementedException();
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        if (user == null) return false;
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        user.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+        return true;
     }
 
-    public Task<UserProfileDto> GetCurrentUserAsync(int userId)
+    public async Task<UserProfileDto> GetCurrentUserAsync(int userId)
     {
-        // TODO: Implement get current user logic
-        throw new NotImplementedException();
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) throw new Exception("User not found");
+
+        return new UserProfileDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            Name = user.Name,
+            PhoneNumber = user.PhoneNumber,
+            Role = user.Role.ToString()
+        };
     }
 
-    public Task<bool> ChangePasswordAsync(int userId, ChangePasswordRequest request)
+    public async Task<bool> ChangePasswordAsync(int userId, ChangePasswordRequest request)
     {
-        // TODO: Implement change password logic
-        throw new NotImplementedException();
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) throw new Exception("User not found");
+
+        if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
+            throw new UnauthorizedAccessException("Current password is incorrect");
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        user.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+        return true;
     }
+
     private async Task<AuthResponse> GenerateAuthResponse(User user)
     {
         var accessToken = GenerateAccessToken(user);
         var refreshToken = GenerateRefreshToken();
+
         _context.UserRefreshTokens.Add(new UserRefreshToken
         {
             UserId = user.Id,
@@ -118,17 +159,18 @@ public class AuthService : IAuthService
             CreatedAt = DateTime.UtcNow
         });
         await _context.SaveChangesAsync();
+
         return new AuthResponse
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             User = new UserProfileDto
             {
-              Id = user.Id,
-              Email = user.Email,
-              Name = user.Name,
-              PhoneNumber = user.PhoneNumber,
-              Role = user.Role.ToString(),
+                Id = user.Id,
+                Email = user.Email,
+                Name = user.Name,
+                PhoneNumber = user.PhoneNumber,
+                Role = user.Role.ToString()
             },
             Role = user.Role.ToString()
         };
@@ -136,7 +178,8 @@ public class AuthService : IAuthService
 
     private string GenerateAccessToken(User user)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "K5gR2ASbU4oIupFbU+LnfPW9Xrl/lzuQVFAs1xCtqee0Ljk4t662BDoQzwr7eJMO16nYAy2BAQXzOgYbVo/wgg=="));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+            _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured")));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var claims = new[]
         {
@@ -145,11 +188,16 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.Role, user.Role.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
-        var token = new JwtSecurityToken(issuer: _configuration["Jwt:Issuer"],audience:_configuration["Jwt:Audience"],claims: claims, expires: DateTime.UtcNow.AddHours(2), signingCredentials: credentials);
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(2),
+            signingCredentials: credentials);
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private string GenerateRefreshToken()
+    private static string GenerateRefreshToken()
     {
         var randomNumber = new byte[32];
         using var rng = RandomNumberGenerator.Create();

@@ -7,7 +7,7 @@ import { formatCurrency } from "../../utils/pricing";
 
 export function ProductDetailPage() {
   const { productId } = useParams();
-  const { getProduct, getProductReviews, getRecommendations, isAuthenticated, wishlistProducts, actions } = useStore();
+  const { getProduct, getProductReviews, fetchProductReviews, getRecommendations, isAuthenticated, wishlistProducts, actions } = useStore();
   const product = getProduct(productId);
   const reviews = getProductReviews(productId);
   const [image, setImage] = useState(product?.image);
@@ -15,8 +15,8 @@ export function ProductDetailPage() {
   const [review, setReview] = useState({ rating: 5, comment: "" });
 
   useEffect(() => {
-    if (productId) actions.addRecentView(productId);
-  }, [productId, actions]);
+    if (productId) fetchProductReviews(productId);
+  }, [productId, fetchProductReviews]);
 
   if (!product) return <EmptyState title="Product not found" message="This item may have been removed from the demo catalog." />;
 

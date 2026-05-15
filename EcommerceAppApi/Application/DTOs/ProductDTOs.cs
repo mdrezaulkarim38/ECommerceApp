@@ -16,12 +16,15 @@ public class ProductDto
     public string? MainImageUrl { get; set; }
     public double? AverageRating { get; set; }
     public int TotalReviews { get; set; }
+    public int SalesCount { get; set; }
     public bool IsActive { get; set; }
 }
 
 public class ProductDetailDto : ProductDto
 {
     public List<ProductImageDto> Images { get; set; } = new();
+    public string? Specs { get; set; }
+    public string? Features { get; set; }
 }
 
 public class ProductImageDto
