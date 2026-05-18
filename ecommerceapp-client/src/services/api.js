@@ -108,10 +108,11 @@ export const authService = {
   login: async (email, password) => {
     const { data } = await apiClient.post('/auth/login', { email, password });
     const result = data.data;
+    const mapped = mapUser(result.user);
     localStorage.setItem('accessToken', result.accessToken);
     localStorage.setItem('refreshToken', result.refreshToken);
-    localStorage.setItem('user', JSON.stringify(result.user));
-    return { ...mapUser(result.user), password };
+    localStorage.setItem('user', JSON.stringify(mapped));
+    return { ...mapped, password };
   },
 
   register: async (form) => {
@@ -124,10 +125,11 @@ export const authService = {
       phoneNumber: form.phone || '',
     });
     const result = data.data;
+    const mapped = mapUser(result.user);
     localStorage.setItem('accessToken', result.accessToken);
     localStorage.setItem('refreshToken', result.refreshToken);
-    localStorage.setItem('user', JSON.stringify(result.user));
-    return { ...mapUser(result.user), password: form.password };
+    localStorage.setItem('user', JSON.stringify(mapped));
+    return { ...mapped, password: form.password };
   },
 
   logout: async () => {
@@ -147,8 +149,9 @@ export const authService = {
     if (!stored) return null;
     try {
       const { data } = await apiClient.get('/auth/profile');
-      localStorage.setItem('user', JSON.stringify(data.data));
-      return mapUser(data.data);
+      const mapped = mapUser(data.data);
+      localStorage.setItem('user', JSON.stringify(mapped));
+      return mapped;
     } catch {
       const parsed = JSON.parse(stored);
       return { ...parsed, id: `u-${parsed.id}` };
@@ -457,6 +460,50 @@ export const addressService = {
   },
 };
 
+export const adminCategoryService = {
+  getCategories: async () => {
+    const { data } = await apiClient.get('/admin/categories');
+    return data.data || [];
+  },
+
+  createCategory: async (category) => {
+    const { data } = await apiClient.post('/admin/categories', {
+      name: category.name,
+      description: category.description || '',
+      imageUrl: category.imageUrl || null,
+      parentCategoryId: category.parentCategoryId || null,
+      displayOrder: category.displayOrder || 0,
+    });
+    return data.data;
+  },
+
+  updateCategory: async (category) => {
+    const { data } = await apiClient.put(`/admin/categories/${category.id}`, {
+      name: category.name,
+      description: category.description || '',
+      imageUrl: category.imageUrl || null,
+      parentCategoryId: category.parentCategoryId || null,
+      displayOrder: category.displayOrder || 0,
+    });
+    return data.data;
+  },
+
+  deleteCategory: async (categoryId) => {
+    await apiClient.delete(`/admin/categories/${categoryId}`);
+  },
+};
+
+const downloadBlob = (blob, filename) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
 export const adminService = {
   getDashboard: async () => {
     const { data } = await apiClient.get('/admin/dashboard');
@@ -547,6 +594,25 @@ export const adminService = {
   deleteProduct: async (productId) => {
     const numericId = parseInt(productId.replace('p-', ''), 10);
     await apiClient.delete(`/admin/products/${numericId}`);
+  },
+
+  exportProducts: async () => {
+    const response = await apiClient.get('/admin/products/export', { responseType: 'blob' });
+    downloadBlob(response.data, 'products.xlsx');
+  },
+
+  downloadTemplate: async () => {
+    const response = await apiClient.get('/admin/products/template', { responseType: 'blob' });
+    downloadBlob(response.data, 'product-import-template.xlsx');
+  },
+
+  importProducts: async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const { data } = await apiClient.post('/admin/products/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data.data;
   },
 
   updateOrderStatus: async (orderId, status, note) => {

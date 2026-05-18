@@ -1,4 +1,5 @@
 export { Field } from "./Field";
+export { ImportModal } from "./ImportModal";
 export { Info } from "./Info";
 export { Metric } from "./Metric";
 export { Panel } from "./Panel";

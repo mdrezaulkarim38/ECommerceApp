@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BarChart3, LayoutDashboard, LogOut, Package, Settings, Sparkles, Users } from "lucide-react";
+import { BarChart3, LayoutDashboard, LogOut, Package, Settings, Sparkles, Tags, Users } from "lucide-react";
 import { useStore } from "../../context/StoreContext";
 import { AdminSettings } from "./tabs/AdminSettings";
 import { AnalyticsForecasting } from "./tabs/AnalyticsForecasting";
 import { DashboardHome } from "./tabs/DashboardHome";
 import { OrdersManagement } from "./tabs/OrdersManagement";
+import { CategoriesManagement } from "./tabs/CategoriesManagement";
 import { ProductsManagement } from "./tabs/ProductsManagement";
 import { UsersManagement } from "./tabs/UsersManagement";
 
 const adminTabs = [
   ["Dashboard", LayoutDashboard],
   ["Products", Package],
+  ["Categories", Tags],
   ["Orders", BarChart3],
   ["Users", Users],
   ["Analytics", Sparkles],
@@ -91,6 +93,7 @@ export default function AdminDashboard() {
         <div className="mx-auto max-w-7xl px-4 py-8">
           {tab === "Dashboard" && <DashboardHome />}
           {tab === "Products" && <ProductsManagement />}
+          {tab === "Categories" && <CategoriesManagement />}
           {tab === "Orders" && <OrdersManagement />}
           {tab === "Users" && <UsersManagement />}
           {tab === "Analytics" && <AnalyticsForecasting />}

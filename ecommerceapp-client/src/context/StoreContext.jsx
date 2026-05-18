@@ -10,6 +10,7 @@ import {
   orderService,
   reviewService,
   addressService,
+  adminCategoryService,
   adminService,
 } from "../services/api";
 
@@ -111,7 +112,20 @@ export function StoreProvider({ children }) {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
           const parsed = JSON.parse(storedUser);
-          dispatch({ type: "SET_USER", user: { ...parsed, id: `u-${parsed.id}` } });
+          dispatch({
+            type: "SET_USER",
+            user: {
+              id: `u-${parsed.id}`,
+              name: parsed.name,
+              email: parsed.email,
+              role: parsed.role?.toLowerCase() || "user",
+              phone: parsed.phoneNumber || parsed.phone || "",
+              address: parsed.address || "",
+              joinedAt: parsed.joinedAt || "",
+              blocked: parsed.blocked || false,
+              addresses: parsed.addresses || [],
+            },
+          });
         }
 
         const [prodResult, cats, brs] = await Promise.all([
@@ -415,6 +429,44 @@ export function StoreProvider({ children }) {
         dispatch({ type: "DELETE_PRODUCT", productId });
         toast.success("Product deleted");
       } catch { toast.error("Failed to delete product"); }
+    },
+
+    async loadProducts() {
+      try {
+        const result = await productService.getProducts({ page: 1, pageSize: 100 });
+        dispatch({ type: "SET_PRODUCTS", products: result.items });
+      } catch { /* ignore */ }
+    },
+
+    async adminAddCategory(category) {
+      try {
+        const result = await adminCategoryService.createCategory(category);
+        const categories = await categoryService.getCategories();
+        dispatch({ type: "SET_CATEGORIES", categories });
+        toast.success("Category created");
+        return result;
+      } catch { toast.error("Failed to create category"); }
+    },
+
+    async adminUpdateCategory(category) {
+      try {
+        const result = await adminCategoryService.updateCategory(category);
+        const categories = await categoryService.getCategories();
+        dispatch({ type: "SET_CATEGORIES", categories });
+        toast.success("Category updated");
+        return result;
+      } catch { toast.error("Failed to update category"); }
+    },
+
+    async adminDeleteCategory(categoryId) {
+      try {
+        await adminCategoryService.deleteCategory(categoryId);
+        const categories = await categoryService.getCategories();
+        dispatch({ type: "SET_CATEGORIES", categories });
+        toast.success("Category deleted");
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to delete category");
+      }
     },
 
     async adminUpdateOrderStatus(orderId, status) {

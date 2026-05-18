@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Download, Edit3, Plus, Search, Trash2, Upload } from "lucide-react";
 import toast from "react-hot-toast";
-import { ProductModal, StatusPill } from "../../../components/admin";
+import { ImportModal, ProductModal, StatusPill } from "../../../components/admin";
 import { useStore } from "../../../context/StoreContext";
 import { emptyProduct } from "../../../data/adminDashboardData";
+import { adminService } from "../../../services/api";
 import { formatCurrency } from "../../../utils/pricing";
 
 export function ProductsManagement() {
@@ -13,6 +14,7 @@ export function ProductsManagement() {
   const [editing, setEditing] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalKey, setModalKey] = useState(0);
+  const [importOpen, setImportOpen] = useState(false);
   const products = state.products.filter((product) =>
     (category === "All" || product.category === category) &&
     `${product.name} ${product.sku}`.toLowerCase().includes(query.toLowerCase()),
@@ -30,6 +32,15 @@ export function ProductsManagement() {
     setModalOpen(true);
   };
 
+  const handleExport = async () => {
+    try {
+      await adminService.exportProducts();
+      toast.success("Products exported");
+    } catch {
+      toast.error("Export failed");
+    }
+  };
+
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -44,8 +55,8 @@ export function ProductsManagement() {
             </select>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button className="btn-secondary" type="button" onClick={() => toast.success("Bulk import simulated")}><Upload size={18} /> Import</button>
-          <button className="btn-secondary" type="button" onClick={() => toast.success("Export simulated")}><Download size={18} /> Export</button>
+          <button className="btn-secondary" type="button" onClick={() => setImportOpen(true)}><Upload size={18} /> Import</button>
+          <button className="btn-secondary" type="button" onClick={handleExport}><Download size={18} /> Export</button>
           <button className="btn-primary" type="button" onClick={openNew}><Plus size={18} /> Add New Product</button>
         </div>
       </div>
@@ -91,6 +102,7 @@ export function ProductsManagement() {
         </table>
       </div>
       <ProductModal key={modalKey} open={modalOpen} product={editing} onClose={() => setModalOpen(false)} />
+      <ImportModal open={importOpen} onClose={() => setImportOpen(false)} onImported={() => actions.loadProducts()} />
     </div>
   );
 }
